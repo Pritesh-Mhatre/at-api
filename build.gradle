@@ -1,0 +1,20 @@
+buildscript {
+	repositories {
+		mavenCentral()
+		mavenLocal()
+	}
+
+	dependencies {
+		classpath 'com.dakshata:gradle-build:1.0.0'
+	}
+}
+
+apply plugin: 'com.dakshata.gradle.build.release'
+
+dependencies {
+
+	api 'com.dakshata:public-library:1.0.0'
+	
+	annotationProcessor 'org.projectlombok:lombok:1.18.10'
+
+}
