@@ -42,7 +42,7 @@ public class AutoTrader implements IAutoTrader {
 		final HttpResponse<OperationResponse> result = this.client.post(this.commandUrl).field("command", command)
 				.asObject(OperationResponse.class);
 		if (result.getStatus() != 200) {
-			return new OperationResponse<>(false, result.getStatusText());
+			return new OperationResponse<>(false, result.getStatus() + ": " + result.getStatusText());
 		}
 
 		return result.getBody();
