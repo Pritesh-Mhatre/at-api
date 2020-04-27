@@ -20,7 +20,7 @@ import kong.unirest.UnirestInstance;
  */
 public class AutoTrader implements IAutoTrader {
 
-	private final UnirestInstance client;
+	private UnirestInstance client;
 
 	private final String commandUrl;
 
@@ -32,18 +32,8 @@ public class AutoTrader implements IAutoTrader {
 	 */
 	public AutoTrader(final String apiKey, final String serviceUrl) {
 		super();
-		final Config config = new Config();
-		config.setDefaultHeader(API_KEY_HEADER, apiKey);
-		this.client = new UnirestInstance(config);
+		this.init(apiKey);
 		this.commandUrl = serviceUrl + "/command/execute";
-	}
-
-	/**
-	 * Graceful shutdown. Call when your application is about to terminate.
-	 */
-	@Override
-	public void shutdown() {
-		this.client.shutDown();
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -52,6 +42,32 @@ public class AutoTrader implements IAutoTrader {
 		final HttpResponse<OperationResponse> result = this.client.post(this.commandUrl).field("command", command)
 				.asObject(OperationResponse.class);
 		return result.getBody();
+	}
+
+	@Override
+	public synchronized void setApiKey(final String apiKey) {
+		this.init(apiKey);
+	}
+
+	private void init(final String apiKey) {
+		this.shutdownClient();
+		final Config config = new Config();
+		config.setDefaultHeader(API_KEY_HEADER, apiKey);
+		this.client = new UnirestInstance(config);
+	}
+
+	public void shutdownClient() {
+		if (this.client != null) {
+			this.client.shutDown();
+		}
+	}
+
+	/**
+	 * Graceful shutdown. Call when your application is about to terminate.
+	 */
+	@Override
+	public void shutdown() {
+		this.shutdownClient();
 	}
 
 }

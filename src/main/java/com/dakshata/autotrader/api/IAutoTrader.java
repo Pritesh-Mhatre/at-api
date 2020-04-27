@@ -28,4 +28,11 @@ public interface IAutoTrader {
 	 */
 	void shutdown();
 
+	/**
+	 * Allows the library user to change API key using code. This is rarely needed.
+	 *
+	 * @param apiKey api key
+	 */
+	void setApiKey(String apiKey);
+
 }
