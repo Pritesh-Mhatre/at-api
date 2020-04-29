@@ -4,6 +4,7 @@
 package com.dakshata.autotrader.api;
 
 import static com.dakshata.constants.autotrader.IAutoTrader.API_KEY_HEADER;
+import static com.dakshata.tools.internet.HttpStatus.toTextDefault;
 
 import com.dakshata.data.model.common.IOperationResponse;
 import com.dakshata.data.model.common.OperationResponse;
@@ -42,7 +43,8 @@ public class AutoTrader implements IAutoTrader {
 		final HttpResponse<OperationResponse> result = this.client.post(this.commandUrl).field("command", command)
 				.asObject(OperationResponse.class);
 		if (result.getStatus() != 200) {
-			return new OperationResponse<>(null, result.getStatus() + ": " + result.getStatusText());
+			final String message = toTextDefault(result.getStatus(), result.getStatusText());
+			return new OperationResponse<>(null, result.getStatus() + ": " + message);
 		}
 
 		return result.getBody();
