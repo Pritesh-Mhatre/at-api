@@ -38,11 +38,11 @@ public class AutoTrader implements IAutoTrader {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public IOperationResponse<Boolean> execute(final String command) {
+	public IOperationResponse<String> execute(final String command) {
 		final HttpResponse<OperationResponse> result = this.client.post(this.commandUrl).field("command", command)
 				.asObject(OperationResponse.class);
 		if (result.getStatus() != 200) {
-			return new OperationResponse<>(false, result.getStatus() + ": " + result.getStatusText());
+			return new OperationResponse<>(null, result.getStatus() + ": " + result.getStatusText());
 		}
 
 		return result.getBody();
