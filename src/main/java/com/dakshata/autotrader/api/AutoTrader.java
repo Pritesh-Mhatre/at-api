@@ -44,7 +44,7 @@ public class AutoTrader implements IAutoTrader {
 				.asObject(OperationResponse.class);
 		if (result.getStatus() != 200) {
 			final String message = toTextDefault(result.getStatus(), result.getStatusText());
-			return new OperationResponse<>(null, result.getStatus() + ": " + message);
+			return new OperationResponse<>(new Exception(result.getStatus() + ": " + message));
 		}
 
 		return result.getBody();
