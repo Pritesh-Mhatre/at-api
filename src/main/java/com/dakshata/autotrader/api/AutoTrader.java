@@ -39,12 +39,11 @@ public class AutoTrader implements IAutoTrader {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public IOperationResponse<String> execute(final String command) {
+	public IOperationResponse<? extends Object> execute(final String command) {
 		final HttpResponse<OperationResponse> result = this.client.post(this.commandUrl).field("command", command)
 				.asObject(OperationResponse.class);
 		if (result.getStatus() != 200) {
-			final String message = toTextDefault(result.getStatus(), result.getStatusText());
-			return new OperationResponse<>(new Exception(result.getStatus() + ": " + message));
+			return this.processHttpError(result);
 		}
 
 		return result.getBody();
@@ -74,6 +73,13 @@ public class AutoTrader implements IAutoTrader {
 	@Override
 	public void shutdown() {
 		this.shutdownClient();
+	}
+
+	@SuppressWarnings("rawtypes")
+	private final <T> IOperationResponse<T> processHttpError(final HttpResponse<OperationResponse> result) {
+		final String message = toTextDefault(result.getStatus(), result.getStatusText());
+		final Exception error = new Exception(result.getStatus() + ": " + message);
+		return OperationResponse.<T>builder().error(error).build();
 	}
 
 }

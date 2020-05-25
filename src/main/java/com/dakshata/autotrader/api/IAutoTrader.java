@@ -19,9 +19,9 @@ public interface IAutoTrader {
 	 * desktop application which receives commands in csv format.
 	 *
 	 * @param command command in comma separated value (csv) format
-	 * @return returns the command id and error (if any)
+	 * @return returns the result of the command
 	 */
-	IOperationResponse<String> execute(String command);
+	IOperationResponse<? extends Object> execute(String command);
 
 	/**
 	 * Graceful shutdown. Call when your application is about to exit.
