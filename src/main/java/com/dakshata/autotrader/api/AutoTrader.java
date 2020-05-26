@@ -56,9 +56,10 @@ public class AutoTrader implements IAutoTrader {
 		this.livePseudoAccountsUrl = serviceUrl + ACCOUNT_URI + "/fetchLivePseudoAccounts";
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public IOperationResponse<Set<String>> fetchLivePseudoAccounts() {
-		final HttpResponse<IOperationResponse<Set<String>>> response = this.client.get(this.livePseudoAccountsUrl)
+		final HttpResponse<OperationResponse> response = this.client.get(this.livePseudoAccountsUrl)
 				.asObject(OperationResponse.class);
 		if (response.getStatus() != 200) {
 			return this.processHttpError(response);
@@ -67,10 +68,11 @@ public class AutoTrader implements IAutoTrader {
 		return response.getBody();
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public IOperationResponse<? extends Object> execute(final String command) {
-		final HttpResponse<IOperationResponse<Object>> response = this.client.post(this.commandUrl)
-				.field("command", command).asObject(OperationResponse.class);
+		final HttpResponse<OperationResponse> response = this.client.post(this.commandUrl).field("command", command)
+				.asObject(OperationResponse.class);
 		if (response.getStatus() != 200) {
 			return this.processHttpError(response);
 		}
@@ -78,11 +80,11 @@ public class AutoTrader implements IAutoTrader {
 		return response.getBody();
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public IOperationResponse<Set<IPlatformOrder>> readPlatformOrders(final String pseudoAccount) {
-		final HttpResponse<IOperationResponse<Set<IPlatformOrder>>> response = this.client
-				.post(this.readPlatformOrdersUrl).field("pseudoAccount", pseudoAccount)
-				.asObject(OperationResponse.class);
+		final HttpResponse<OperationResponse> response = this.client.post(this.readPlatformOrdersUrl)
+				.field("pseudoAccount", pseudoAccount).asObject(OperationResponse.class);
 		if (response.getStatus() != 200) {
 			return this.processHttpError(response);
 		}
@@ -90,11 +92,11 @@ public class AutoTrader implements IAutoTrader {
 		return response.getBody();
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public IOperationResponse<Set<IPlatformPosition>> readPlatformPositions(final String pseudoAccount) {
-		final HttpResponse<IOperationResponse<Set<IPlatformPosition>>> response = this.client
-				.post(this.readPlatformPositionsUrl).field("pseudoAccount", pseudoAccount)
-				.asObject(OperationResponse.class);
+		final HttpResponse<OperationResponse> response = this.client.post(this.readPlatformPositionsUrl)
+				.field("pseudoAccount", pseudoAccount).asObject(OperationResponse.class);
 		if (response.getStatus() != 200) {
 			return this.processHttpError(response);
 		}
@@ -102,11 +104,11 @@ public class AutoTrader implements IAutoTrader {
 		return response.getBody();
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public IOperationResponse<Set<IPlatformMargin>> readPlatformMargins(final String pseudoAccount) {
-		final HttpResponse<IOperationResponse<Set<IPlatformMargin>>> response = this.client
-				.post(this.readPlatformMarginsUrl).field("pseudoAccount", pseudoAccount)
-				.asObject(OperationResponse.class);
+		final HttpResponse<OperationResponse> response = this.client.post(this.readPlatformMarginsUrl)
+				.field("pseudoAccount", pseudoAccount).asObject(OperationResponse.class);
 		if (response.getStatus() != 200) {
 			return this.processHttpError(response);
 		}
@@ -144,9 +146,10 @@ public class AutoTrader implements IAutoTrader {
 		this.shutdownClient();
 	}
 
-	private final <T> IOperationResponse<T> processHttpError(final HttpResponse<IOperationResponse<T>> result) {
-		final String message = toTextDefault(result.getStatus(), result.getStatusText());
-		final Exception error = new Exception(result.getStatus() + ": " + message);
+	@SuppressWarnings("rawtypes")
+	private final <T> IOperationResponse<T> processHttpError(final HttpResponse<OperationResponse> response) {
+		final String message = toTextDefault(response.getStatus(), response.getStatusText());
+		final Exception error = new Exception(response.getStatus() + ": " + message);
 		return OperationResponse.<T>builder().error(error).build();
 	}
 
