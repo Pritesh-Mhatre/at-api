@@ -32,9 +32,13 @@ public class AutoTrader implements IAutoTrader {
 
 	private static final String TRADING_URI = "/trading";
 
+	private static final String ACCOUNT_URI = "/account";
+
 	private UnirestInstance client;
 
-	private final String commandUrl, readPlatformOrdersUrl, readPlatformPositionsUrl, readPlatformMarginsUrl;
+	private final String commandUrl, livePseudoAccountsUrl;
+
+	private final String readPlatformOrdersUrl, readPlatformPositionsUrl, readPlatformMarginsUrl;
 
 	/**
 	 * Initialize the AutoTrader API with your private API key.
@@ -49,6 +53,18 @@ public class AutoTrader implements IAutoTrader {
 		this.readPlatformOrdersUrl = serviceUrl + TRADING_URI + "/readPlatformOrders";
 		this.readPlatformPositionsUrl = serviceUrl + TRADING_URI + "/readPlatformPositions";
 		this.readPlatformMarginsUrl = serviceUrl + TRADING_URI + "/readPlatformMargins";
+		this.livePseudoAccountsUrl = serviceUrl + ACCOUNT_URI + "/fetchLivePseudoAccounts";
+	}
+
+	@Override
+	public IOperationResponse<Set<String>> fetchLivePseudoAccounts() {
+		final HttpResponse<IOperationResponse<Set<String>>> response = this.client.get(this.livePseudoAccountsUrl)
+				.asObject(OperationResponse.class);
+		if (response.getStatus() != 200) {
+			return this.processHttpError(response);
+		}
+
+		return response.getBody();
 	}
 
 	@Override

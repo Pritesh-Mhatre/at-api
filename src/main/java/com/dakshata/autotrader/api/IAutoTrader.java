@@ -19,6 +19,13 @@ import com.dakshata.trading.model.platform.IPlatformPosition;
 public interface IAutoTrader {
 
 	/**
+	 * Provides live pseudo accounts available under your user.
+	 * 
+	 * @return live pseudo accounts
+	 */
+	IOperationResponse<Set<String>> fetchLivePseudoAccounts();
+
+	/**
 	 * This function executes a given command. The command can be operations like
 	 * place, modify & cancel order etc. This is primarily used for AutoTrader
 	 * desktop application which receives commands in csv format.
