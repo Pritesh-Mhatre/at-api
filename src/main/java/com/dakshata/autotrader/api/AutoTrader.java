@@ -6,12 +6,18 @@ package com.dakshata.autotrader.api;
 import static com.dakshata.constants.autotrader.IAutoTrader.API_KEY_HEADER;
 import static com.dakshata.tools.internet.HttpStatus.toTextDefault;
 
+import java.util.Set;
+
 import com.dakshata.data.model.common.IOperationResponse;
 import com.dakshata.data.model.common.OperationResponse;
+import com.dakshata.trading.model.platform.IPlatformMargin;
+import com.dakshata.trading.model.platform.IPlatformOrder;
+import com.dakshata.trading.model.platform.IPlatformPosition;
 
 import kong.unirest.Config;
 import kong.unirest.HttpResponse;
 import kong.unirest.UnirestInstance;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Implementation of AutoTrade API functions.
@@ -19,11 +25,16 @@ import kong.unirest.UnirestInstance;
  * @author PRITESH
  *
  */
+@Slf4j
 public class AutoTrader implements IAutoTrader {
+
+	private static final String COMMAND_URI = "/command";
+
+	private static final String TRADING_URI = "/trading";
 
 	private UnirestInstance client;
 
-	private final String commandUrl;
+	private final String commandUrl, readPlatformOrdersUrl, readPlatformPositionsUrl, readPlatformMarginsUrl;
 
 	/**
 	 * Initialize the AutoTrader API with your private API key.
@@ -34,19 +45,57 @@ public class AutoTrader implements IAutoTrader {
 	public AutoTrader(final String apiKey, final String serviceUrl) {
 		super();
 		this.init(apiKey);
-		this.commandUrl = serviceUrl + "/command/execute";
+		this.commandUrl = serviceUrl + COMMAND_URI + "/execute";
+		this.readPlatformOrdersUrl = serviceUrl + TRADING_URI + "/readPlatformOrders";
+		this.readPlatformPositionsUrl = serviceUrl + TRADING_URI + "/readPlatformPositions";
+		this.readPlatformMarginsUrl = serviceUrl + TRADING_URI + "/readPlatformMargins";
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public IOperationResponse<? extends Object> execute(final String command) {
-		final HttpResponse<OperationResponse> result = this.client.post(this.commandUrl).field("command", command)
-				.asObject(OperationResponse.class);
-		if (result.getStatus() != 200) {
-			return this.processHttpError(result);
+		final HttpResponse<IOperationResponse<Object>> response = this.client.post(this.commandUrl)
+				.field("command", command).asObject(OperationResponse.class);
+		if (response.getStatus() != 200) {
+			return this.processHttpError(response);
 		}
 
-		return result.getBody();
+		return response.getBody();
+	}
+
+	@Override
+	public IOperationResponse<Set<IPlatformOrder>> readPlatformOrders(final String pseudoAccount) {
+		final HttpResponse<IOperationResponse<Set<IPlatformOrder>>> response = this.client
+				.post(this.readPlatformOrdersUrl).field("pseudoAccount", pseudoAccount)
+				.asObject(OperationResponse.class);
+		if (response.getStatus() != 200) {
+			return this.processHttpError(response);
+		}
+
+		return response.getBody();
+	}
+
+	@Override
+	public IOperationResponse<Set<IPlatformPosition>> readPlatformPositions(final String pseudoAccount) {
+		final HttpResponse<IOperationResponse<Set<IPlatformPosition>>> response = this.client
+				.post(this.readPlatformPositionsUrl).field("pseudoAccount", pseudoAccount)
+				.asObject(OperationResponse.class);
+		if (response.getStatus() != 200) {
+			return this.processHttpError(response);
+		}
+
+		return response.getBody();
+	}
+
+	@Override
+	public IOperationResponse<Set<IPlatformMargin>> readPlatformMargins(final String pseudoAccount) {
+		final HttpResponse<IOperationResponse<Set<IPlatformMargin>>> response = this.client
+				.post(this.readPlatformMarginsUrl).field("pseudoAccount", pseudoAccount)
+				.asObject(OperationResponse.class);
+		if (response.getStatus() != 200) {
+			return this.processHttpError(response);
+		}
+
+		return response.getBody();
 	}
 
 	@Override
@@ -62,8 +111,12 @@ public class AutoTrader implements IAutoTrader {
 	}
 
 	public void shutdownClient() {
-		if (this.client != null) {
-			this.client.shutDown();
+		try {
+			if (this.client != null) {
+				this.client.shutDown();
+			}
+		} catch (final Exception e) {
+			log.error("Error while shutting down client: ", e);
 		}
 	}
 
@@ -75,8 +128,7 @@ public class AutoTrader implements IAutoTrader {
 		this.shutdownClient();
 	}
 
-	@SuppressWarnings("rawtypes")
-	private final <T> IOperationResponse<T> processHttpError(final HttpResponse<OperationResponse> result) {
+	private final <T> IOperationResponse<T> processHttpError(final HttpResponse<IOperationResponse<T>> result) {
 		final String message = toTextDefault(result.getStatus(), result.getStatusText());
 		final Exception error = new Exception(result.getStatus() + ": " + message);
 		return OperationResponse.<T>builder().error(error).build();
