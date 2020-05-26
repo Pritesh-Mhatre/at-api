@@ -10,12 +10,14 @@ import java.util.Set;
 
 import com.dakshata.data.model.common.IOperationResponse;
 import com.dakshata.data.model.common.OperationResponse;
-import com.dakshata.trading.model.platform.IPlatformMargin;
-import com.dakshata.trading.model.platform.IPlatformOrder;
-import com.dakshata.trading.model.platform.IPlatformPosition;
+import com.dakshata.trading.model.platform.PlatformMargin;
+import com.dakshata.trading.model.platform.PlatformOrder;
+import com.dakshata.trading.model.platform.PlatformPosition;
 
 import kong.unirest.Config;
+import kong.unirest.GenericType;
 import kong.unirest.HttpResponse;
+import kong.unirest.JacksonObjectMapper;
 import kong.unirest.UnirestInstance;
 import lombok.extern.slf4j.Slf4j;
 
@@ -56,11 +58,11 @@ public class AutoTrader implements IAutoTrader {
 		this.livePseudoAccountsUrl = serviceUrl + ACCOUNT_URI + "/fetchLivePseudoAccounts";
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public IOperationResponse<Set<String>> fetchLivePseudoAccounts() {
-		final HttpResponse<OperationResponse> response = this.client.get(this.livePseudoAccountsUrl)
-				.asObject(OperationResponse.class);
+		final HttpResponse<OperationResponse<Set<String>>> response = this.client.get(this.livePseudoAccountsUrl)
+				.asObject(new GenericType<OperationResponse<Set<String>>>() {
+				});
 		if (response.getStatus() != 200) {
 			return this.processHttpError(response);
 		}
@@ -68,11 +70,11 @@ public class AutoTrader implements IAutoTrader {
 		return response.getBody();
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public IOperationResponse<? extends Object> execute(final String command) {
-		final HttpResponse<OperationResponse> response = this.client.post(this.commandUrl).field("command", command)
-				.asObject(OperationResponse.class);
+		final HttpResponse<OperationResponse<? extends Object>> response = this.client.post(this.commandUrl)
+				.field("command", command).asObject(new GenericType<OperationResponse<? extends Object>>() {
+				});
 		if (response.getStatus() != 200) {
 			return this.processHttpError(response);
 		}
@@ -80,11 +82,12 @@ public class AutoTrader implements IAutoTrader {
 		return response.getBody();
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public IOperationResponse<Set<IPlatformOrder>> readPlatformOrders(final String pseudoAccount) {
-		final HttpResponse<OperationResponse> response = this.client.post(this.readPlatformOrdersUrl)
-				.field("pseudoAccount", pseudoAccount).asObject(OperationResponse.class);
+	public IOperationResponse<Set<PlatformOrder>> readPlatformOrders(final String pseudoAccount) {
+		final HttpResponse<OperationResponse<Set<PlatformOrder>>> response = this.client
+				.post(this.readPlatformOrdersUrl).field("pseudoAccount", pseudoAccount)
+				.asObject(new GenericType<OperationResponse<Set<PlatformOrder>>>() {
+				});
 		if (response.getStatus() != 200) {
 			return this.processHttpError(response);
 		}
@@ -92,11 +95,12 @@ public class AutoTrader implements IAutoTrader {
 		return response.getBody();
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public IOperationResponse<Set<IPlatformPosition>> readPlatformPositions(final String pseudoAccount) {
-		final HttpResponse<OperationResponse> response = this.client.post(this.readPlatformPositionsUrl)
-				.field("pseudoAccount", pseudoAccount).asObject(OperationResponse.class);
+	public IOperationResponse<Set<PlatformPosition>> readPlatformPositions(final String pseudoAccount) {
+		final HttpResponse<OperationResponse<Set<PlatformPosition>>> response = this.client
+				.post(this.readPlatformPositionsUrl).field("pseudoAccount", pseudoAccount)
+				.asObject(new GenericType<OperationResponse<Set<PlatformPosition>>>() {
+				});
 		if (response.getStatus() != 200) {
 			return this.processHttpError(response);
 		}
@@ -104,11 +108,12 @@ public class AutoTrader implements IAutoTrader {
 		return response.getBody();
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public IOperationResponse<Set<IPlatformMargin>> readPlatformMargins(final String pseudoAccount) {
-		final HttpResponse<OperationResponse> response = this.client.post(this.readPlatformMarginsUrl)
-				.field("pseudoAccount", pseudoAccount).asObject(OperationResponse.class);
+	public IOperationResponse<Set<PlatformMargin>> readPlatformMargins(final String pseudoAccount) {
+		final HttpResponse<OperationResponse<Set<PlatformMargin>>> response = this.client
+				.post(this.readPlatformMarginsUrl).field("pseudoAccount", pseudoAccount)
+				.asObject(new GenericType<OperationResponse<Set<PlatformMargin>>>() {
+				});
 		if (response.getStatus() != 200) {
 			return this.processHttpError(response);
 		}
@@ -125,6 +130,8 @@ public class AutoTrader implements IAutoTrader {
 		this.shutdownClient();
 		final Config config = new Config();
 		config.setDefaultHeader(API_KEY_HEADER, apiKey);
+		// Spring boot uses Jackson by default, hence we use jackson here
+		config.setObjectMapper(new JacksonObjectMapper());
 		this.client = new UnirestInstance(config);
 	}
 
@@ -146,8 +153,7 @@ public class AutoTrader implements IAutoTrader {
 		this.shutdownClient();
 	}
 
-	@SuppressWarnings("rawtypes")
-	private final <T> IOperationResponse<T> processHttpError(final HttpResponse<OperationResponse> response) {
+	private final <T> IOperationResponse<T> processHttpError(final HttpResponse<?> response) {
 		final String message = toTextDefault(response.getStatus(), response.getStatusText());
 		final Exception error = new Exception(response.getStatus() + ": " + message);
 		return OperationResponse.<T>builder().error(error).build();

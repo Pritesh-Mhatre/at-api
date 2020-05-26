@@ -6,9 +6,9 @@ package com.dakshata.autotrader.api;
 import java.util.Set;
 
 import com.dakshata.data.model.common.IOperationResponse;
-import com.dakshata.trading.model.platform.IPlatformMargin;
-import com.dakshata.trading.model.platform.IPlatformOrder;
-import com.dakshata.trading.model.platform.IPlatformPosition;
+import com.dakshata.trading.model.platform.PlatformMargin;
+import com.dakshata.trading.model.platform.PlatformOrder;
+import com.dakshata.trading.model.platform.PlatformPosition;
 
 /**
  * AutoTrader API instance.
@@ -20,7 +20,7 @@ public interface IAutoTrader {
 
 	/**
 	 * Provides live pseudo accounts available under your user.
-	 * 
+	 *
 	 * @return live pseudo accounts
 	 */
 	IOperationResponse<Set<String>> fetchLivePseudoAccounts();
@@ -42,7 +42,7 @@ public interface IAutoTrader {
 	 * @param pseudoAccount pseudo account id
 	 * @return orders trading platform orders
 	 */
-	IOperationResponse<Set<IPlatformOrder>> readPlatformOrders(final String pseudoAccount);
+	IOperationResponse<Set<PlatformOrder>> readPlatformOrders(final String pseudoAccount);
 
 	/**
 	 * Read trading platform positions from the trading account mapped to the given
@@ -51,7 +51,7 @@ public interface IAutoTrader {
 	 * @param pseudoAccount pseudo account id
 	 * @return positions trading platform positions
 	 */
-	IOperationResponse<Set<IPlatformPosition>> readPlatformPositions(final String pseudoAccount);
+	IOperationResponse<Set<PlatformPosition>> readPlatformPositions(final String pseudoAccount);
 
 	/**
 	 * Read trading platform margins from the trading account mapped to the given
@@ -60,7 +60,7 @@ public interface IAutoTrader {
 	 * @param pseudoAccount pseudo account id
 	 * @return margins trading platform margins
 	 */
-	IOperationResponse<Set<IPlatformMargin>> readPlatformMargins(final String pseudoAccount);
+	IOperationResponse<Set<PlatformMargin>> readPlatformMargins(final String pseudoAccount);
 
 	/**
 	 * Graceful shutdown. Call when your application is about to exit.
