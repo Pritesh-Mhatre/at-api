@@ -154,8 +154,12 @@ public class AutoTrader implements IAutoTrader {
 	}
 
 	private final <T> IOperationResponse<T> processHttpError(final HttpResponse<?> response) {
-		final String message = toTextDefault(response.getStatus(), response.getStatusText());
-		final Exception error = new Exception(response.getStatus() + ": " + message);
+		final int status = response.getStatus();
+
+		final String message = (status == 403) ? "Your API Key is wrong. Please check settings."
+				: toTextDefault(status, response.getStatusText());
+
+		final Exception error = new Exception(status + ": " + message);
 		return OperationResponse.<T>builder().error(error).build();
 	}
 
