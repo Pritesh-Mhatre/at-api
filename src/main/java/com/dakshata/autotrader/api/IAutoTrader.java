@@ -100,6 +100,9 @@ public interface IAutoTrader {
 			TradeType tradeType, OrderType orderType, int quantity, float price, float triggerPrice);
 
 	/**
+	 * Cancels an order. For more information, please see
+	 * <a href="https://stocksdeveloper.in/documentation/api/cancel-order/">api
+	 * docs</a>.
 	 *
 	 * @param pseudoAccount pseudo account
 	 * @param platformId    platform id (id given to order by trading platform)
