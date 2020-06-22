@@ -101,7 +101,8 @@ public class AutoTrader implements IAutoTrader {
 
 	@Override
 	public IOperationResponse<String> placeOrder(@NonNull final Order order) {
-		final HttpResponse<OperationResponse<String>> response = this.client.post(this.placeOrderUrl).body(order)
+		final HttpResponse<OperationResponse<String>> response = this.client.post(this.placeOrderUrl)
+				.header("Content-Type", "application/json").body(order)
 				.asObject(new GenericType<OperationResponse<String>>() {
 				});
 		if (response.getStatus() != 200) {
