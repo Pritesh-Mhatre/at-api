@@ -18,5 +18,15 @@ dependencies {
 	api 'com.konghq:unirest-objectmapper-jackson:3.4.01'
 
 	annotationProcessor 'org.projectlombok:lombok:1.18.10'
+}
 
+//create a single Jar with all dependencies
+task fatJar(type: Jar) {
+	manifest {
+		attributes 'Implementation-Title': 'AutoTrader Web Java API',
+		'Implementation-Version': version
+	}
+	baseName = project.name + '-all'
+	from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+	with jar
 }
