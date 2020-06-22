@@ -18,6 +18,9 @@ dependencies {
 	api 'com.konghq:unirest-objectmapper-jackson:3.4.01'
 
 	annotationProcessor 'org.projectlombok:lombok:1.18.10'
+	
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'	
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
 }
 
 //create a single Jar with all dependencies
@@ -29,4 +32,10 @@ task fatJar(type: Jar) {
 	baseName = project.name + '-all'
 	from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
 	with jar
+}
+
+test {
+    useJUnitPlatform {
+        excludeTags 'skip'
+    }
 }
