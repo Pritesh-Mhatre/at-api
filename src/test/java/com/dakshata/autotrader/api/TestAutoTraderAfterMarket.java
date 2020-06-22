@@ -25,7 +25,8 @@ import com.dakshata.trading.model.trade.PseudoAccount;
  */
 public class TestAutoTraderAfterMarket {
 
-	private static IAutoTrader AT = new AutoTrader("b25f5e2f-93cb-430e-a81d-f960a490034f", "http://localhost:9017");
+	private static IAutoTrader AT = AutoTrader.createInstance("b25f5e2f-93cb-430e-a81d-f960a490034f",
+			"http://localhost:9017");
 
 	@Tag("skip")
 	@Test

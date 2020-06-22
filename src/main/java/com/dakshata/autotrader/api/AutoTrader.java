@@ -5,6 +5,7 @@ package com.dakshata.autotrader.api;
 
 import static com.dakshata.constants.autotrader.IAutoTrader.API_KEY_HEADER;
 import static com.dakshata.tools.internet.HttpStatus.toTextDefault;
+import static java.util.Collections.synchronizedMap;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,6 +39,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AutoTrader implements IAutoTrader {
 
+	private static final Map<String, AutoTrader> INSTANCES = synchronizedMap(new HashMap<>());
+
 	private static final String COMMAND_URI = "/command";
 
 	private static final String TRADING_URI = "/trading";
@@ -60,7 +63,7 @@ public class AutoTrader implements IAutoTrader {
 	 * @param apiKey     your private api key
 	 * @param serviceUrl AutoTrader api service url
 	 */
-	public AutoTrader(final String apiKey, final String serviceUrl) {
+	private AutoTrader(final String apiKey, final String serviceUrl) {
 		super();
 		this.init(apiKey);
 		this.commandUrl = serviceUrl + COMMAND_URI + "/execute";
@@ -73,6 +76,17 @@ public class AutoTrader implements IAutoTrader {
 		this.placeBracketOrderUrl = serviceUrl + TRADING_URI + "/placeBracketOrder";
 		this.cancelOrderByPlatformIdUrl = serviceUrl + TRADING_URI + "/cancelOrderByPlatformId";
 		this.livePseudoAccountsUrl = serviceUrl + ACCOUNT_URI + "/fetchLivePseudoAccounts";
+	}
+
+	public static final synchronized IAutoTrader createInstance(@NonNull final String apiKey,
+			@NonNull final String serviceUrl) {
+		AutoTrader instance = INSTANCES.get(apiKey);
+		if (instance == null) {
+			instance = new AutoTrader(apiKey, serviceUrl);
+			INSTANCES.put(apiKey, instance);
+		}
+
+		return instance;
 	}
 
 	@Override
