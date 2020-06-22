@@ -25,6 +25,7 @@ import kong.unirest.GenericType;
 import kong.unirest.HttpResponse;
 import kong.unirest.JacksonObjectMapper;
 import kong.unirest.UnirestInstance;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -87,7 +88,7 @@ public class AutoTrader implements IAutoTrader {
 	}
 
 	@Override
-	public IOperationResponse<? extends Object> execute(final String command) {
+	public IOperationResponse<? extends Object> execute(@NonNull final String command) {
 		final HttpResponse<OperationResponse<? extends Object>> response = this.client.post(this.commandUrl)
 				.field("command", command).asObject(new GenericType<OperationResponse<? extends Object>>() {
 				});
@@ -99,7 +100,7 @@ public class AutoTrader implements IAutoTrader {
 	}
 
 	@Override
-	public IOperationResponse<String> placeOrder(final Order order) {
+	public IOperationResponse<String> placeOrder(@NonNull final Order order) {
 		final HttpResponse<OperationResponse<String>> response = this.client.post(this.placeOrderUrl).body(order)
 				.asObject(new GenericType<OperationResponse<String>>() {
 				});
@@ -111,9 +112,10 @@ public class AutoTrader implements IAutoTrader {
 	}
 
 	@Override
-	public IOperationResponse<String> placeRegularOrder(final String pseudoAccount, final String exchange,
-			final String symbol, final TradeType tradeType, final OrderType orderType, final ProductType productType,
-			final int quantity, final float price, final float triggerPrice) {
+	public IOperationResponse<String> placeRegularOrder(@NonNull final String pseudoAccount,
+			final @NonNull String exchange, @NonNull final String symbol, @NonNull final TradeType tradeType,
+			@NonNull final OrderType orderType, @NonNull final ProductType productType, final int quantity,
+			final float price, final float triggerPrice) {
 		final Map<String, Object> params = new HashMap<>();
 		params.put("pseudoAccount", pseudoAccount);
 		params.put("exchange", exchange);
@@ -129,10 +131,10 @@ public class AutoTrader implements IAutoTrader {
 	}
 
 	@Override
-	public IOperationResponse<String> placeBracketOrder(final String pseudoAccount, final String exchange,
-			final String symbol, final TradeType tradeType, final OrderType orderType, final int quantity,
-			final float price, final float triggerPrice, final float target, final float stoploss,
-			final float trailingStoploss) {
+	public IOperationResponse<String> placeBracketOrder(@NonNull final String pseudoAccount,
+			@NonNull final String exchange, @NonNull final String symbol, @NonNull final TradeType tradeType,
+			@NonNull final OrderType orderType, final int quantity, final float price, final float triggerPrice,
+			final float target, final float stoploss, final float trailingStoploss) {
 		final Map<String, Object> params = new HashMap<>();
 		params.put("pseudoAccount", pseudoAccount);
 		params.put("exchange", exchange);
@@ -150,9 +152,9 @@ public class AutoTrader implements IAutoTrader {
 	}
 
 	@Override
-	public IOperationResponse<String> placeCoverOrder(final String pseudoAccount, final String exchange,
-			final String symbol, final TradeType tradeType, final OrderType orderType, final int quantity,
-			final float price, final float triggerPrice) {
+	public IOperationResponse<String> placeCoverOrder(@NonNull final String pseudoAccount,
+			@NonNull final String exchange, @NonNull final String symbol, @NonNull final TradeType tradeType,
+			@NonNull final OrderType orderType, final int quantity, final float price, final float triggerPrice) {
 		final Map<String, Object> params = new HashMap<>();
 		params.put("pseudoAccount", pseudoAccount);
 		params.put("exchange", exchange);
@@ -167,7 +169,8 @@ public class AutoTrader implements IAutoTrader {
 	}
 
 	@Override
-	public IOperationResponse<Boolean> cancelOrderByPlatformId(final String pseudoAccount, final String platformId) {
+	public IOperationResponse<Boolean> cancelOrderByPlatformId(@NonNull final String pseudoAccount,
+			@NonNull final String platformId) {
 		final Map<String, Object> params = new HashMap<>();
 		params.put("pseudoAccount", pseudoAccount);
 		params.put("platformId", platformId);
@@ -183,7 +186,7 @@ public class AutoTrader implements IAutoTrader {
 	}
 
 	@Override
-	public IOperationResponse<Set<PlatformOrder>> readPlatformOrders(final String pseudoAccount) {
+	public IOperationResponse<Set<PlatformOrder>> readPlatformOrders(@NonNull final String pseudoAccount) {
 		final HttpResponse<OperationResponse<Set<PlatformOrder>>> response = this.client
 				.post(this.readPlatformOrdersUrl).field("pseudoAccount", pseudoAccount)
 				.asObject(new GenericType<OperationResponse<Set<PlatformOrder>>>() {
@@ -196,7 +199,7 @@ public class AutoTrader implements IAutoTrader {
 	}
 
 	@Override
-	public IOperationResponse<Set<PlatformPosition>> readPlatformPositions(final String pseudoAccount) {
+	public IOperationResponse<Set<PlatformPosition>> readPlatformPositions(@NonNull final String pseudoAccount) {
 		final HttpResponse<OperationResponse<Set<PlatformPosition>>> response = this.client
 				.post(this.readPlatformPositionsUrl).field("pseudoAccount", pseudoAccount)
 				.asObject(new GenericType<OperationResponse<Set<PlatformPosition>>>() {
@@ -209,7 +212,7 @@ public class AutoTrader implements IAutoTrader {
 	}
 
 	@Override
-	public IOperationResponse<Set<PlatformMargin>> readPlatformMargins(final String pseudoAccount) {
+	public IOperationResponse<Set<PlatformMargin>> readPlatformMargins(@NonNull final String pseudoAccount) {
 		final HttpResponse<OperationResponse<Set<PlatformMargin>>> response = this.client
 				.post(this.readPlatformMarginsUrl).field("pseudoAccount", pseudoAccount)
 				.asObject(new GenericType<OperationResponse<Set<PlatformMargin>>>() {
@@ -222,7 +225,7 @@ public class AutoTrader implements IAutoTrader {
 	}
 
 	@Override
-	public synchronized void setApiKey(final String apiKey) {
+	public synchronized void setApiKey(@NonNull final String apiKey) {
 		this.init(apiKey);
 	}
 
