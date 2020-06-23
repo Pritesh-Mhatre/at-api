@@ -28,6 +28,10 @@ public class TestAutoTraderAfterMarket {
 	private static IAutoTrader AT = AutoTrader.createInstance("b25f5e2f-93cb-430e-a81d-f960a490034f",
 			"http://localhost:9017");
 
+	// private static IAutoTrader AT =
+	// AutoTrader.createInstance("75bf216e-a830-4ed1-a04f-fb42f330415c",
+	// "https://stocksdeveloper.in:9017");
+
 	@Tag("skip")
 	@Test
 	public void testPlaceOrder() {
