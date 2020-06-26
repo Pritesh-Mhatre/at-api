@@ -26,6 +26,7 @@ import kong.unirest.GenericType;
 import kong.unirest.HttpResponse;
 import kong.unirest.JacksonObjectMapper;
 import kong.unirest.UnirestInstance;
+import kong.unirest.UnirestParsingException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
@@ -94,11 +95,8 @@ public class AutoTrader implements IAutoTrader {
 		final HttpResponse<OperationResponse<Set<String>>> response = this.client.get(this.livePseudoAccountsUrl)
 				.asObject(new GenericType<OperationResponse<Set<String>>>() {
 				});
-		if (response.getStatus() != 200) {
-			return this.processHttpError(response);
-		}
 
-		return response.getBody();
+		return this.processResponse(response);
 	}
 
 	@Override
@@ -107,7 +105,11 @@ public class AutoTrader implements IAutoTrader {
 				.field("command", command).asObject(new GenericType<OperationResponse<? extends Object>>() {
 				});
 		if (response.getStatus() != 200) {
-			return this.processHttpError(response);
+			if (response.getParsingError().isPresent()) {
+				return OperationResponse.<Object>builder().error(response.getParsingError().get()).build();
+			} else {
+				return this.processHttpError(response);
+			}
 		}
 
 		return response.getBody();
@@ -119,11 +121,8 @@ public class AutoTrader implements IAutoTrader {
 				.header("Content-Type", "application/json").body(order)
 				.asObject(new GenericType<OperationResponse<String>>() {
 				});
-		if (response.getStatus() != 200) {
-			return this.processHttpError(response);
-		}
 
-		return response.getBody();
+		return this.processResponse(response);
 	}
 
 	@Override
@@ -193,11 +192,8 @@ public class AutoTrader implements IAutoTrader {
 		final HttpResponse<OperationResponse<Boolean>> response = this.client.post(this.cancelOrderByPlatformIdUrl)
 				.fields(params).asObject(new GenericType<OperationResponse<Boolean>>() {
 				});
-		if (response.getStatus() != 200) {
-			return this.processHttpError(response);
-		}
 
-		return response.getBody();
+		return this.processResponse(response);
 	}
 
 	@Override
@@ -206,11 +202,8 @@ public class AutoTrader implements IAutoTrader {
 				.post(this.readPlatformOrdersUrl).field("pseudoAccount", pseudoAccount)
 				.asObject(new GenericType<OperationResponse<Set<PlatformOrder>>>() {
 				});
-		if (response.getStatus() != 200) {
-			return this.processHttpError(response);
-		}
 
-		return response.getBody();
+		return this.processResponse(response);
 	}
 
 	@Override
@@ -219,11 +212,8 @@ public class AutoTrader implements IAutoTrader {
 				.post(this.readPlatformPositionsUrl).field("pseudoAccount", pseudoAccount)
 				.asObject(new GenericType<OperationResponse<Set<PlatformPosition>>>() {
 				});
-		if (response.getStatus() != 200) {
-			return this.processHttpError(response);
-		}
 
-		return response.getBody();
+		return this.processResponse(response);
 	}
 
 	@Override
@@ -232,11 +222,8 @@ public class AutoTrader implements IAutoTrader {
 				.post(this.readPlatformMarginsUrl).field("pseudoAccount", pseudoAccount)
 				.asObject(new GenericType<OperationResponse<Set<PlatformMargin>>>() {
 				});
-		if (response.getStatus() != 200) {
-			return this.processHttpError(response);
-		}
 
-		return response.getBody();
+		return this.processResponse(response);
 	}
 
 	@Override
@@ -275,11 +262,28 @@ public class AutoTrader implements IAutoTrader {
 		final HttpResponse<OperationResponse<String>> response = this.client.post(url).fields(params)
 				.asObject(new GenericType<OperationResponse<String>>() {
 				});
-		if (response.getStatus() != 200) {
-			return this.processHttpError(response);
+
+		return this.processResponse(response);
+	}
+
+	private final <T> IOperationResponse<T> processResponse(final HttpResponse<OperationResponse<T>> response) {
+		if (response == null) {
+			return OperationResponse.<T>builder().error(new Exception("Null response received from server")).build();
+		}
+		if (!response.isSuccess()) {
+			if (response.getParsingError().isPresent()) {
+				return this.processParsingError(response.getParsingError().get());
+			} else {
+				return this.processHttpError(response);
+			}
 		}
 
+		// If no errors, then return original response
 		return response.getBody();
+	}
+
+	private final <T> IOperationResponse<T> processParsingError(final UnirestParsingException pe) {
+		return OperationResponse.<T>builder().error(pe).build();
 	}
 
 	private final <T> IOperationResponse<T> processHttpError(final HttpResponse<?> response) {
