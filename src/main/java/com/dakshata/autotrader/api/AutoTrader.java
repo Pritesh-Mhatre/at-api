@@ -271,7 +271,9 @@ public class AutoTrader implements IAutoTrader {
 			return OperationResponse.<T>builder().error(new Exception("Null response received from server")).build();
 		}
 		if (!response.isSuccess()) {
-			if (response.getParsingError().isPresent()) {
+			// Process parsing errors only when http status code is 200, otherwise for other
+			// errors there will always be parsing errors
+			if ((response.getStatus() == 200) && response.getParsingError().isPresent()) {
 				return this.processParsingError(response.getParsingError().get());
 			} else {
 				return this.processHttpError(response);
