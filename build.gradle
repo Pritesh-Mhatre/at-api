@@ -27,9 +27,9 @@ dependencies {
 task fatJar(type: Jar) {
 	manifest {
 		attributes 'Implementation-Title': 'AutoTrader Web Java API',
-		'Implementation-Version': version
+		'Implementation-Version': archiveVersion
 	}
-	baseName = project.name + '-all'
+	archiveBaseName = project.name + '-all'
 	from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
 	with jar
 }
