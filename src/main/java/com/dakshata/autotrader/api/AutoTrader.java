@@ -109,6 +109,13 @@ public class AutoTrader implements IAutoTrader {
 	}
 
 	@Override
+	public IOperationResponse<Boolean> modifyOrderByPlatformId(final String pseudoAccount, final String platformId,
+			final OrderType orderType, final Integer quantity, final Float price, final Float triggerPrice) {
+		return this.tradingService.modifyOrderByPlatformId(pseudoAccount, platformId, orderType, quantity, price,
+				triggerPrice);
+	}
+
+	@Override
 	public IOperationResponse<Set<PlatformOrder>> readPlatformOrders(@NonNull final String pseudoAccount) {
 		return this.tradingService.readPlatformOrders(pseudoAccount);
 	}

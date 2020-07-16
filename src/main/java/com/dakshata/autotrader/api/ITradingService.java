@@ -113,6 +113,27 @@ public interface ITradingService {
 	IOperationResponse<Boolean> cancelOrderByPlatformId(String apiKey, String pseudoAccount, String platformId);
 
 	/**
+	 * Modifies the order as per the parameters passed.
+	 *
+	 * @param pseudoAccount pseudo account
+	 * @param platformId    platform id (id given to order by trading platform)
+	 * @param orderType     order type (pass null if you do not want to modify order
+	 *                      type)
+	 * @param quantity      quantity (pass zero if you do not want to modify
+	 *                      quantity)
+	 * @param price         price (pass zero if you do not want to modify price)
+	 * @param triggerPrice  trigger price (pass zero if you do not want to modify
+	 *                      trigger price)
+	 * @return <code>true</code> on success, <code>false</code> otherwise
+	 */
+	IOperationResponse<Boolean> modifyOrderByPlatformId(final String pseudoAccount, final String platformId,
+			final OrderType orderType, final Integer quantity, final Float price, final Float triggerPrice);
+
+	IOperationResponse<Boolean> modifyOrderByPlatformId(String apiKey, final String pseudoAccount,
+			final String platformId, final OrderType orderType, final Integer quantity, final Float price,
+			final Float triggerPrice);
+
+	/**
 	 * This function executes a given command. The command can be operations like
 	 * place, modify & cancel order etc. This is primarily used for AutoTrader
 	 * desktop application which receives commands in csv format.

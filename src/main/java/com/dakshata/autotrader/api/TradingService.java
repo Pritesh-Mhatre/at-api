@@ -5,6 +5,7 @@ package com.dakshata.autotrader.api;
 
 import static com.dakshata.constants.autotrader.IAutoTrader.API_KEY_HEADER;
 import static com.dakshata.tools.internet.HttpStatus.toTextDefault;
+import static com.dakshata.tools.string.StringUtil.isEmpty;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +16,6 @@ import com.dakshata.constants.trading.ProductType;
 import com.dakshata.constants.trading.TradeType;
 import com.dakshata.data.model.common.IOperationResponse;
 import com.dakshata.data.model.common.OperationResponse;
-import com.dakshata.tools.string.StringUtil;
 import com.dakshata.trading.model.platform.PlatformMargin;
 import com.dakshata.trading.model.platform.PlatformOrder;
 import com.dakshata.trading.model.platform.PlatformPosition;
@@ -50,7 +50,7 @@ public class TradingService implements ITradingService {
 
 	private final String placeOrderUrl, placeRegularOrderUrl, placeCoverOrderUrl, placeBracketOrderUrl;
 
-	private final String cancelOrderByPlatformIdUrl;
+	private final String cancelOrderByPlatformIdUrl, modifyOrderByPlatformIdUrl;
 
 	@Getter
 	@Setter
@@ -68,6 +68,7 @@ public class TradingService implements ITradingService {
 		this.placeCoverOrderUrl = serviceUrl + TRADING_URI + "/placeCoverOrder";
 		this.placeBracketOrderUrl = serviceUrl + TRADING_URI + "/placeBracketOrder";
 		this.cancelOrderByPlatformIdUrl = serviceUrl + TRADING_URI + "/cancelOrderByPlatformId";
+		this.modifyOrderByPlatformIdUrl = serviceUrl + TRADING_URI + "/modifyOrderByPlatformId";
 		this.livePseudoAccountsUrl = serviceUrl + ACCOUNT_URI + "/fetchLivePseudoAccounts";
 	}
 
@@ -164,6 +165,37 @@ public class TradingService implements ITradingService {
 	}
 
 	@Override
+	public IOperationResponse<Boolean> modifyOrderByPlatformId(@NonNull final String pseudoAccount,
+			@NonNull final String platformId, final OrderType orderType, final Integer quantity, final Float price,
+			final Float triggerPrice) {
+		return this.modifyOrderByPlatformId(null, pseudoAccount, platformId, orderType, quantity, price, triggerPrice);
+	}
+
+	@Override
+	public IOperationResponse<Boolean> modifyOrderByPlatformId(final String apiKey, @NonNull final String pseudoAccount,
+			@NonNull final String platformId, final OrderType orderType, final Integer quantity, final Float price,
+			final Float triggerPrice) {
+		final Map<String, Object> params = new HashMap<>();
+		params.put("pseudoAccount", pseudoAccount);
+		params.put("platformId", platformId);
+		params.put("orderType", orderType);
+		params.put("quantity", quantity);
+		params.put("price", price);
+		params.put("triggerPrice", triggerPrice);
+
+		final HttpRequestWithBody request = this.client.post(this.modifyOrderByPlatformIdUrl);
+		if (!isEmpty(apiKey)) {
+			request.header(API_KEY_HEADER, apiKey);
+		}
+
+		final HttpResponse<OperationResponse<Boolean>> response = request.fields(params)
+				.asObject(new GenericType<OperationResponse<Boolean>>() {
+				});
+
+		return this.processResponse(response);
+	}
+
+	@Override
 	public IOperationResponse<Boolean> cancelOrderByPlatformId(@NonNull final String pseudoAccount,
 			@NonNull final String platformId) {
 		return this.cancelOrderByPlatformId(null, pseudoAccount, platformId);
@@ -177,7 +209,7 @@ public class TradingService implements ITradingService {
 		params.put("platformId", platformId);
 
 		final HttpRequestWithBody request = this.client.post(this.cancelOrderByPlatformIdUrl);
-		if (!StringUtil.isEmpty(apiKey)) {
+		if (!isEmpty(apiKey)) {
 			request.header(API_KEY_HEADER, apiKey);
 		}
 

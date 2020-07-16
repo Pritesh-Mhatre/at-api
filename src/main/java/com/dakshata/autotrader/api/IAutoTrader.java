@@ -100,6 +100,23 @@ public interface IAutoTrader {
 			TradeType tradeType, OrderType orderType, int quantity, float price, float triggerPrice);
 
 	/**
+	 * Modifies the order as per the parameters passed.
+	 *
+	 * @param pseudoAccount pseudo account
+	 * @param platformId    platform id (id given to order by trading platform)
+	 * @param orderType     order type (pass null if you do not want to modify order
+	 *                      type)
+	 * @param quantity      quantity (pass zero if you do not want to modify
+	 *                      quantity)
+	 * @param price         price (pass zero if you do not want to modify price)
+	 * @param triggerPrice  trigger price (pass zero if you do not want to modify
+	 *                      trigger price)
+	 * @return <code>true</code> on success, <code>false</code> otherwise
+	 */
+	IOperationResponse<Boolean> modifyOrderByPlatformId(final String pseudoAccount, final String platformId,
+			final OrderType orderType, final Integer quantity, final Float price, final Float triggerPrice);
+
+	/**
 	 * Cancels an order. For more information, please see
 	 * <a href="https://stocksdeveloper.in/documentation/api/cancel-order/">api
 	 * docs</a>.
