@@ -178,7 +178,7 @@ public class TradingService implements ITradingService {
 		final Map<String, Object> params = new HashMap<>();
 		params.put("pseudoAccount", pseudoAccount);
 		params.put("platformId", platformId);
-		params.put("orderType", orderType);
+		params.put("orderType", (orderType == null) ? "" : orderType.name());
 		params.put("quantity", quantity);
 		params.put("price", price);
 		params.put("triggerPrice", triggerPrice);
