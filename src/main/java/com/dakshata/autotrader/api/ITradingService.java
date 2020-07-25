@@ -12,7 +12,7 @@ import com.dakshata.data.model.common.IOperationResponse;
 import com.dakshata.trading.model.platform.PlatformMargin;
 import com.dakshata.trading.model.platform.PlatformOrder;
 import com.dakshata.trading.model.platform.PlatformPosition;
-import com.dakshata.trading.model.portfolio.Order;
+import com.dakshata.trading.model.portfolio.IOrder;
 
 /**
  * Responsible for trading activities.
@@ -37,9 +37,9 @@ public interface ITradingService {
 	 * @param order order object
 	 * @return the order id given by your stock broker
 	 */
-	IOperationResponse<String> placeOrder(Order order);
+	IOperationResponse<String> placeOrder(IOrder order);
 
-	IOperationResponse<String> placeOrder(String apiKey, Order order);
+	IOperationResponse<String> placeOrder(String apiKey, IOrder order);
 
 	/**
 	 * Places a regular order. For more information, please see <a href=

@@ -19,7 +19,7 @@ import com.dakshata.data.model.common.OperationResponse;
 import com.dakshata.trading.model.platform.PlatformMargin;
 import com.dakshata.trading.model.platform.PlatformOrder;
 import com.dakshata.trading.model.platform.PlatformPosition;
-import com.dakshata.trading.model.portfolio.Order;
+import com.dakshata.trading.model.portfolio.IOrder;
 
 import kong.unirest.GenericType;
 import kong.unirest.HttpRequestWithBody;
@@ -98,12 +98,12 @@ public class TradingService implements ITradingService {
 	}
 
 	@Override
-	public IOperationResponse<String> placeOrder(@NonNull final Order order) {
+	public IOperationResponse<String> placeOrder(@NonNull final IOrder order) {
 		return this.placeOrder(null, order);
 	}
 
 	@Override
-	public IOperationResponse<String> placeOrder(final String apiKey, final Order order) {
+	public IOperationResponse<String> placeOrder(final String apiKey, final IOrder order) {
 		final HttpRequestWithBody request = this.client.post(this.placeOrderUrl);
 		if (!isEmpty(apiKey)) {
 			request.header(API_KEY_HEADER, apiKey);
