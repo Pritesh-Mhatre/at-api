@@ -39,6 +39,8 @@ public interface ITradingService {
 	 */
 	IOperationResponse<String> placeOrder(Order order);
 
+	IOperationResponse<String> placeOrder(String apiKey, Order order);
+
 	/**
 	 * Places a regular order. For more information, please see <a href=
 	 * "https://stocksdeveloper.in/documentation/api/place-regular-order/">api

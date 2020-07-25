@@ -99,9 +99,18 @@ public class TradingService implements ITradingService {
 
 	@Override
 	public IOperationResponse<String> placeOrder(@NonNull final Order order) {
-		final HttpResponse<OperationResponse<String>> response = this.client.post(this.placeOrderUrl)
-				.header("Content-Type", "application/json").body(order)
-				.asObject(new GenericType<OperationResponse<String>>() {
+		return this.placeOrder(null, order);
+	}
+
+	@Override
+	public IOperationResponse<String> placeOrder(final String apiKey, final Order order) {
+		final HttpRequestWithBody request = this.client.post(this.placeOrderUrl);
+		if (!isEmpty(apiKey)) {
+			request.header(API_KEY_HEADER, apiKey);
+		}
+
+		final HttpResponse<OperationResponse<String>> response = request.header("Content-Type", "application/json")
+				.body(order).asObject(new GenericType<OperationResponse<String>>() {
 				});
 
 		return this.processResponse(response);
