@@ -14,7 +14,7 @@ apply plugin: 'com.dakshata.gradle.build.release'
 dependencies {
 
 	api 'com.dakshata:public-library:1.0.0'
-	api 'com.konghq:unirest-java:3.4.01'
+	api 'com.konghq:unirest-java:3.9.00'
 	api 'com.konghq:unirest-objectmapper-jackson:3.4.01'
 
 	annotationProcessor 'org.projectlombok:lombok:1.18.10'
