@@ -5,6 +5,8 @@ package com.dakshata.autotrader.api;
 
 import static com.dakshata.constants.autotrader.IAutoTrader.API_KEY_HEADER;
 import static java.util.Collections.synchronizedMap;
+import static kong.unirest.Config.DEFAULT_CONNECTION_TIMEOUT;
+import static kong.unirest.Config.DEFAULT_SOCKET_TIMEOUT;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -156,6 +158,8 @@ public class AutoTrader implements IAutoTrader {
 		config.setDefaultHeader(API_KEY_HEADER, apiKey);
 		// Spring boot uses Jackson by default, hence we use jackson here
 		config.setObjectMapper(new JacksonObjectMapper());
+		config.connectTimeout(DEFAULT_CONNECTION_TIMEOUT * 2);
+		config.socketTimeout(DEFAULT_SOCKET_TIMEOUT * 2);
 		return new UnirestInstance(config);
 	}
 
