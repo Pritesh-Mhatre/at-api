@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.Set;
 
 import com.dakshata.constants.trading.OrderType;
+import com.dakshata.constants.trading.PositionCategory;
+import com.dakshata.constants.trading.PositionType;
 import com.dakshata.constants.trading.ProductType;
 import com.dakshata.constants.trading.TradeType;
 import com.dakshata.data.model.common.IOperationResponse;
@@ -121,6 +123,17 @@ public class AutoTrader implements IAutoTrader {
 			final OrderType orderType, final Integer quantity, final Float price, final Float triggerPrice) {
 		return this.tradingService.modifyOrderByPlatformId(pseudoAccount, platformId, orderType, quantity, price,
 				triggerPrice);
+	}
+
+	@Override
+	public IOperationResponse<Boolean> squareOffPosition(final String pseudoAccount, final PositionCategory category,
+			final PositionType type, final String exchange, final String symbol) {
+		return this.tradingService.squareOffPosition(pseudoAccount, category, type, exchange, symbol);
+	}
+
+	@Override
+	public IOperationResponse<Boolean> squareOffPortfolio(final String pseudoAccount, final PositionCategory category) {
+		return this.tradingService.squareOffPortfolio(pseudoAccount, category);
 	}
 
 	@Override

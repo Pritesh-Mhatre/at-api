@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.Set;
 
 import com.dakshata.constants.trading.OrderType;
+import com.dakshata.constants.trading.PositionCategory;
+import com.dakshata.constants.trading.PositionType;
 import com.dakshata.constants.trading.ProductType;
 import com.dakshata.constants.trading.TradeType;
 import com.dakshata.data.model.common.IOperationResponse;
@@ -54,6 +56,8 @@ public class TradingService implements ITradingService {
 
 	private final String cancelChildOrdersByPlatformIdUrl;
 
+	private final String squareOffPositionUrl, squareOffPortfolioUrl;
+
 	@Getter
 	@Setter
 	private UnirestInstance client;
@@ -73,6 +77,8 @@ public class TradingService implements ITradingService {
 		this.cancelChildOrdersByPlatformIdUrl = serviceUrl + TRADING_URI + "/cancelChildOrdersByPlatformId";
 		this.modifyOrderByPlatformIdUrl = serviceUrl + TRADING_URI + "/modifyOrderByPlatformId";
 		this.livePseudoAccountsUrl = serviceUrl + ACCOUNT_URI + "/fetchLivePseudoAccounts";
+		this.squareOffPositionUrl = serviceUrl + ACCOUNT_URI + "/squareOffPosition";
+		this.squareOffPortfolioUrl = serviceUrl + ACCOUNT_URI + "/squareOffPortfolio";
 	}
 
 	@Override
@@ -229,6 +235,58 @@ public class TradingService implements ITradingService {
 	public IOperationResponse<Boolean> cancelChildOrdersByPlatformId(final String apiKey, final String pseudoAccount,
 			final String platformId) {
 		return this.cancelGeneric(this.cancelChildOrdersByPlatformIdUrl, apiKey, pseudoAccount, platformId);
+	}
+
+	@Override
+	public IOperationResponse<Boolean> squareOffPosition(final String pseudoAccount, final PositionCategory category,
+			final PositionType type, final String exchange, final String symbol) {
+		return this.squareOffPosition(null, pseudoAccount, category, type, exchange, symbol);
+	}
+
+	@Override
+	public IOperationResponse<Boolean> squareOffPosition(final String apiKey, final String pseudoAccount,
+			final PositionCategory category, final PositionType type, final String exchange, final String symbol) {
+		final Map<String, Object> params = new HashMap<>();
+		params.put("pseudoAccount", pseudoAccount);
+		params.put("category", category);
+		params.put("type", type);
+		params.put("exchange", exchange);
+		params.put("symbol", symbol);
+
+		final HttpRequestWithBody request = this.client.post(this.squareOffPositionUrl);
+		if (!isEmpty(apiKey)) {
+			request.header(API_KEY_HEADER, apiKey);
+		}
+
+		final HttpResponse<OperationResponse<Boolean>> response = request.fields(params)
+				.asObject(new GenericType<OperationResponse<Boolean>>() {
+				});
+
+		return this.processResponse(response);
+	}
+
+	@Override
+	public IOperationResponse<Boolean> squareOffPortfolio(final String pseudoAccount, final PositionCategory category) {
+		return this.squareOffPortfolio(null, pseudoAccount, category);
+	}
+
+	@Override
+	public IOperationResponse<Boolean> squareOffPortfolio(final String apiKey, final String pseudoAccount,
+			final PositionCategory category) {
+		final Map<String, Object> params = new HashMap<>();
+		params.put("pseudoAccount", pseudoAccount);
+		params.put("category", category);
+
+		final HttpRequestWithBody request = this.client.post(this.squareOffPortfolioUrl);
+		if (!isEmpty(apiKey)) {
+			request.header(API_KEY_HEADER, apiKey);
+		}
+
+		final HttpResponse<OperationResponse<Boolean>> response = request.fields(params)
+				.asObject(new GenericType<OperationResponse<Boolean>>() {
+				});
+
+		return this.processResponse(response);
 	}
 
 	@Override
