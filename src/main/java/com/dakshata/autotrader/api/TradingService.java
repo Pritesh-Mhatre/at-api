@@ -77,8 +77,8 @@ public class TradingService implements ITradingService {
 		this.cancelChildOrdersByPlatformIdUrl = serviceUrl + TRADING_URI + "/cancelChildOrdersByPlatformId";
 		this.modifyOrderByPlatformIdUrl = serviceUrl + TRADING_URI + "/modifyOrderByPlatformId";
 		this.livePseudoAccountsUrl = serviceUrl + ACCOUNT_URI + "/fetchLivePseudoAccounts";
-		this.squareOffPositionUrl = serviceUrl + ACCOUNT_URI + "/squareOffPosition";
-		this.squareOffPortfolioUrl = serviceUrl + ACCOUNT_URI + "/squareOffPortfolio";
+		this.squareOffPositionUrl = serviceUrl + TRADING_URI + "/squareOffPosition";
+		this.squareOffPortfolioUrl = serviceUrl + TRADING_URI + "/squareOffPortfolio";
 	}
 
 	@Override
