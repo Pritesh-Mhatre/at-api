@@ -173,6 +173,10 @@ public class AutoTrader implements IAutoTrader {
 		config.setObjectMapper(new JacksonObjectMapper());
 		config.connectTimeout(DEFAULT_CONNECTION_TIMEOUT * 2);
 		config.socketTimeout(DEFAULT_SOCKET_TIMEOUT * 2);
+		// Disable ssl verification to improve performance (as we are connecting to our
+		// own servers). This will not stop ssl connection, it will only skip
+		// verification.
+		config.verifySsl(false);
 		return new UnirestInstance(config);
 	}
 
