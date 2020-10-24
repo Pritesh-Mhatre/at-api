@@ -104,6 +104,19 @@ public interface ITradingService {
 			TradeType tradeType, OrderType orderType, int quantity, float price, float triggerPrice);
 
 	/**
+	 * Cancels all open orders for the given account. For more information, please
+	 * see
+	 * <a href="https://stocksdeveloper.in/documentation/api/cancel-all-orders/">api
+	 * docs</a>.
+	 *
+	 * @param pseudoAccount pseudo account
+	 * @return <code>true</code> on success, <code>false</code> otherwise
+	 */
+	IOperationResponse<Boolean> cancelAllOrders(String pseudoAccount);
+
+	IOperationResponse<Boolean> cancelAllOrders(String apiKey, String pseudoAccount);
+
+	/**
 	 * Cancels an order. For more information, please see
 	 * <a href="https://stocksdeveloper.in/documentation/api/cancel-order/">api
 	 * docs</a>.

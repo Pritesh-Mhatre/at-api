@@ -54,7 +54,7 @@ public class TradingService implements ITradingService {
 
 	private final String cancelOrderByPlatformIdUrl, modifyOrderByPlatformIdUrl;
 
-	private final String cancelChildOrdersByPlatformIdUrl;
+	private final String cancelChildOrdersByPlatformIdUrl, cancelAllOrdersUrl;
 
 	private final String squareOffPositionUrl, squareOffPortfolioUrl;
 
@@ -75,6 +75,7 @@ public class TradingService implements ITradingService {
 		this.placeBracketOrderUrl = serviceUrl + TRADING_URI + "/placeBracketOrder";
 		this.cancelOrderByPlatformIdUrl = serviceUrl + TRADING_URI + "/cancelOrderByPlatformId";
 		this.cancelChildOrdersByPlatformIdUrl = serviceUrl + TRADING_URI + "/cancelChildOrdersByPlatformId";
+		this.cancelAllOrdersUrl = serviceUrl + TRADING_URI + "/cancelAllOrders";
 		this.modifyOrderByPlatformIdUrl = serviceUrl + TRADING_URI + "/modifyOrderByPlatformId";
 		this.livePseudoAccountsUrl = serviceUrl + ACCOUNT_URI + "/fetchLivePseudoAccounts";
 		this.squareOffPositionUrl = serviceUrl + TRADING_URI + "/squareOffPosition";
@@ -226,6 +227,16 @@ public class TradingService implements ITradingService {
 	}
 
 	@Override
+	public IOperationResponse<Boolean> cancelAllOrders(final String pseudoAccount) {
+		return this.cancelAllOrders(null, pseudoAccount);
+	}
+
+	@Override
+	public IOperationResponse<Boolean> cancelAllOrders(final String apiKey, final String pseudoAccount) {
+		return this.cancelGeneric(this.cancelAllOrdersUrl, apiKey, pseudoAccount, null);
+	}
+
+	@Override
 	public IOperationResponse<Boolean> cancelChildOrdersByPlatformId(final String pseudoAccount,
 			final String platformId) {
 		return this.cancelChildOrdersByPlatformId(null, pseudoAccount, platformId);
@@ -363,7 +374,9 @@ public class TradingService implements ITradingService {
 			final String platformId) {
 		final Map<String, Object> params = new HashMap<>();
 		params.put("pseudoAccount", pseudoAccount);
-		params.put("platformId", platformId);
+		if (platformId != null) {
+			params.put("platformId", platformId);
+		}
 
 		final HttpRequestWithBody request = this.client.post(url);
 		if (!isEmpty(apiKey)) {

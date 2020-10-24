@@ -132,6 +132,17 @@ public interface IAutoTrader {
 	IOperationResponse<Boolean> cancelOrderByPlatformId(String pseudoAccount, String platformId);
 
 	/**
+	 * Cancels all open orders for the given account. For more information, please
+	 * see
+	 * <a href="https://stocksdeveloper.in/documentation/api/cancel-all-orders/">api
+	 * docs</a>.
+	 *
+	 * @param pseudoAccount pseudo account
+	 * @return <code>true</code> on success, <code>false</code> otherwise
+	 */
+	IOperationResponse<Boolean> cancelAllOrders(String pseudoAccount);
+
+	/**
 	 * Used for exiting an open Bracket order or Cover order position. Cancels the
 	 * child orders for the given parent order. For more information, please see
 	 * <a href=

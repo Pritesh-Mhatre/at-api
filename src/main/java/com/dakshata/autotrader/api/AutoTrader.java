@@ -107,6 +107,11 @@ public class AutoTrader implements IAutoTrader {
 	}
 
 	@Override
+	public IOperationResponse<Boolean> cancelAllOrders(final String pseudoAccount) {
+		return this.tradingService.cancelAllOrders(pseudoAccount);
+	}
+
+	@Override
 	public IOperationResponse<Boolean> cancelOrderByPlatformId(@NonNull final String pseudoAccount,
 			@NonNull final String platformId) {
 		return this.tradingService.cancelOrderByPlatformId(pseudoAccount, platformId);
