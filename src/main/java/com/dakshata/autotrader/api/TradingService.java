@@ -363,7 +363,7 @@ public class TradingService implements ITradingService {
 	private final <T> IOperationResponse<T> processHttpError(final HttpResponse<?> response) {
 		final int status = response.getStatus();
 
-		final String message = (status == 403) ? "Your API Key is wrong. Please check settings."
+		final String message = (status == 403) ? "Either your API Key is wrong or the user might be disabled."
 				: toTextDefault(status, response.getStatusText());
 
 		final Exception error = new Exception(status + ": " + message);
