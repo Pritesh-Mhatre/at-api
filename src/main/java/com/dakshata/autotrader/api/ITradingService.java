@@ -230,4 +230,11 @@ public interface ITradingService {
 	 */
 	IOperationResponse<Set<PlatformMargin>> readPlatformMargins(final String pseudoAccount);
 
+	/**
+	 * Gets the latest version of at-desktop client.
+	 *
+	 * @return at-desktop latest version
+	 */
+	IOperationResponse<String> autoTraderDesktopVersion();
+
 }

@@ -58,6 +58,8 @@ public class TradingService implements ITradingService {
 
 	private final String squareOffPositionUrl, squareOffPortfolioUrl;
 
+	private final String autoTraderDesktopVersionUrl;
+
 	@Getter
 	@Setter
 	private UnirestInstance client;
@@ -80,6 +82,7 @@ public class TradingService implements ITradingService {
 		this.livePseudoAccountsUrl = serviceUrl + ACCOUNT_URI + "/fetchLivePseudoAccounts";
 		this.squareOffPositionUrl = serviceUrl + TRADING_URI + "/squareOffPosition";
 		this.squareOffPortfolioUrl = serviceUrl + TRADING_URI + "/squareOffPortfolio";
+		this.autoTraderDesktopVersionUrl = serviceUrl + TRADING_URI + "/autoTraderDesktopVersion";
 	}
 
 	@Override
@@ -387,6 +390,14 @@ public class TradingService implements ITradingService {
 				.asObject(new GenericType<OperationResponse<Boolean>>() {
 				});
 
+		return this.processResponse(response);
+	}
+
+	@Override
+	public IOperationResponse<String> autoTraderDesktopVersion() {
+		final HttpResponse<OperationResponse<String>> response = this.client.get(this.autoTraderDesktopVersionUrl)
+				.asObject(new GenericType<OperationResponse<String>>() {
+				});
 		return this.processResponse(response);
 	}
 
