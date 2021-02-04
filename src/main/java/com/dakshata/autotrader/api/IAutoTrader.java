@@ -226,4 +226,11 @@ public interface IAutoTrader {
 	 */
 	void setApiKey(String apiKey);
 
+	/**
+	 * Gets the latest version of at-desktop client.
+	 *
+	 * @return at-desktop latest version
+	 */
+	IOperationResponse<String> autoTraderDesktopVersion();
+
 }

@@ -163,6 +163,11 @@ public class AutoTrader implements IAutoTrader {
 		this.tradingService.setClient(client);
 	}
 
+	@Override
+	public IOperationResponse<String> autoTraderDesktopVersion() {
+		return this.tradingService.autoTraderDesktopVersion();
+	}
+
 	/**
 	 * Graceful shutdown. Call when your application is about to terminate.
 	 */
