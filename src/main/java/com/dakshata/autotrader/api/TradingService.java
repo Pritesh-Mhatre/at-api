@@ -18,6 +18,7 @@ import com.dakshata.constants.trading.ProductType;
 import com.dakshata.constants.trading.TradeType;
 import com.dakshata.data.model.common.IOperationResponse;
 import com.dakshata.data.model.common.OperationResponse;
+import com.dakshata.trading.model.platform.PlatformHolding;
 import com.dakshata.trading.model.platform.PlatformMargin;
 import com.dakshata.trading.model.platform.PlatformOrder;
 import com.dakshata.trading.model.platform.PlatformPosition;
@@ -48,7 +49,8 @@ public class TradingService implements ITradingService {
 
 	private final String commandUrl, livePseudoAccountsUrl;
 
-	private final String readPlatformOrdersUrl, readPlatformPositionsUrl, readPlatformMarginsUrl;
+	private final String readPlatformOrdersUrl, readPlatformPositionsUrl, readPlatformMarginsUrl,
+			readPlatformHoldingsUrl;
 
 	private final String placeOrderUrl, placeRegularOrderUrl, placeCoverOrderUrl, placeBracketOrderUrl;
 
@@ -71,6 +73,7 @@ public class TradingService implements ITradingService {
 		this.readPlatformOrdersUrl = serviceUrl + TRADING_URI + "/readPlatformOrders";
 		this.readPlatformPositionsUrl = serviceUrl + TRADING_URI + "/readPlatformPositions";
 		this.readPlatformMarginsUrl = serviceUrl + TRADING_URI + "/readPlatformMargins";
+		this.readPlatformHoldingsUrl = serviceUrl + TRADING_URI + "/readPlatformHoldings";
 		this.placeOrderUrl = serviceUrl + TRADING_URI + "/placeOrder";
 		this.placeRegularOrderUrl = serviceUrl + TRADING_URI + "/placeRegularOrder";
 		this.placeCoverOrderUrl = serviceUrl + TRADING_URI + "/placeCoverOrder";
@@ -328,6 +331,16 @@ public class TradingService implements ITradingService {
 		final HttpResponse<OperationResponse<Set<PlatformMargin>>> response = this.client
 				.post(this.readPlatformMarginsUrl).field("pseudoAccount", pseudoAccount)
 				.asObject(new GenericType<OperationResponse<Set<PlatformMargin>>>() {
+				});
+
+		return this.processResponse(response);
+	}
+
+	@Override
+	public IOperationResponse<Set<PlatformHolding>> readPlatformHoldings(@NonNull final String pseudoAccount) {
+		final HttpResponse<OperationResponse<Set<PlatformHolding>>> response = this.client
+				.post(this.readPlatformHoldingsUrl).field("pseudoAccount", pseudoAccount)
+				.asObject(new GenericType<OperationResponse<Set<PlatformHolding>>>() {
 				});
 
 		return this.processResponse(response);

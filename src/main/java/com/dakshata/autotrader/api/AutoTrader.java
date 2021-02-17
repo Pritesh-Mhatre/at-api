@@ -18,6 +18,7 @@ import com.dakshata.constants.trading.PositionType;
 import com.dakshata.constants.trading.ProductType;
 import com.dakshata.constants.trading.TradeType;
 import com.dakshata.data.model.common.IOperationResponse;
+import com.dakshata.trading.model.platform.PlatformHolding;
 import com.dakshata.trading.model.platform.PlatformMargin;
 import com.dakshata.trading.model.platform.PlatformOrder;
 import com.dakshata.trading.model.platform.PlatformPosition;
@@ -154,6 +155,11 @@ public class AutoTrader implements IAutoTrader {
 	@Override
 	public IOperationResponse<Set<PlatformMargin>> readPlatformMargins(@NonNull final String pseudoAccount) {
 		return this.tradingService.readPlatformMargins(pseudoAccount);
+	}
+
+	@Override
+	public IOperationResponse<Set<PlatformHolding>> readPlatformHoldings(@NonNull final String pseudoAccount) {
+		return this.tradingService.readPlatformHoldings(pseudoAccount);
 	}
 
 	@Override

@@ -11,6 +11,7 @@ import com.dakshata.constants.trading.PositionType;
 import com.dakshata.constants.trading.ProductType;
 import com.dakshata.constants.trading.TradeType;
 import com.dakshata.data.model.common.IOperationResponse;
+import com.dakshata.trading.model.platform.PlatformHolding;
 import com.dakshata.trading.model.platform.PlatformMargin;
 import com.dakshata.trading.model.platform.PlatformOrder;
 import com.dakshata.trading.model.platform.PlatformPosition;
@@ -229,6 +230,15 @@ public interface ITradingService {
 	 * @return margins trading platform margins
 	 */
 	IOperationResponse<Set<PlatformMargin>> readPlatformMargins(final String pseudoAccount);
+
+	/**
+	 * Read trading platform holdings from the trading account mapped to the given
+	 * pseudo account.
+	 *
+	 * @param pseudoAccount pseudo account id
+	 * @return holdings trading platform holdings
+	 */
+	IOperationResponse<Set<PlatformHolding>> readPlatformHoldings(final String pseudoAccount);
 
 	/**
 	 * Gets the latest version of at-desktop client.
