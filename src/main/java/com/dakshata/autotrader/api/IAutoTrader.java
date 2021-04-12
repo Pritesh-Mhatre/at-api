@@ -25,7 +25,7 @@ import com.dakshata.trading.model.portfolio.Order;
  */
 public interface IAutoTrader {
 
-	String SERVER_URL = "https://stocksdeveloper.in:9017";
+	String SERVER_URL = "https://api.stocksdeveloper.in";
 
 	/**
 	 * Provides live pseudo accounts available under your user.
