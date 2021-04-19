@@ -16,6 +16,7 @@ import com.dakshata.trading.model.platform.PlatformMargin;
 import com.dakshata.trading.model.platform.PlatformOrder;
 import com.dakshata.trading.model.platform.PlatformPosition;
 import com.dakshata.trading.model.portfolio.IOrder;
+import com.dakshata.trading.model.tv.order.TvOrder;
 
 /**
  * Responsible for trading activities.
@@ -43,6 +44,16 @@ public interface ITradingService {
 	IOperationResponse<String> placeOrder(IOrder order);
 
 	IOperationResponse<String> placeOrder(String apiKey, IOrder order);
+
+	/**
+	 * Places an order received from Trading View. This method is not supposed to be
+	 * used by outside world.
+	 *
+	 * @param apiKey api key
+	 * @param order  order object
+	 * @return the order id given by your stock broker
+	 */
+	IOperationResponse<Boolean> placeTvOrder(String apiKey, TvOrder order);
 
 	/**
 	 * Places a regular order. For more information, please see <a href=

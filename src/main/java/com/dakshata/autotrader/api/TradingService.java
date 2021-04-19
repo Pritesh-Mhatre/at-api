@@ -23,6 +23,7 @@ import com.dakshata.trading.model.platform.PlatformMargin;
 import com.dakshata.trading.model.platform.PlatformOrder;
 import com.dakshata.trading.model.platform.PlatformPosition;
 import com.dakshata.trading.model.portfolio.IOrder;
+import com.dakshata.trading.model.tv.order.TvOrder;
 
 import kong.unirest.GenericType;
 import kong.unirest.HttpRequestWithBody;
@@ -52,7 +53,7 @@ public class TradingService implements ITradingService {
 	private final String readPlatformOrdersUrl, readPlatformPositionsUrl, readPlatformMarginsUrl,
 			readPlatformHoldingsUrl;
 
-	private final String placeOrderUrl, placeRegularOrderUrl, placeCoverOrderUrl, placeBracketOrderUrl;
+	private final String placeOrderUrl, placeTvOrderUrl, placeRegularOrderUrl, placeCoverOrderUrl, placeBracketOrderUrl;
 
 	private final String cancelOrderByPlatformIdUrl, modifyOrderByPlatformIdUrl;
 
@@ -75,6 +76,7 @@ public class TradingService implements ITradingService {
 		this.readPlatformMarginsUrl = serviceUrl + TRADING_URI + "/readPlatformMargins";
 		this.readPlatformHoldingsUrl = serviceUrl + TRADING_URI + "/readPlatformHoldings";
 		this.placeOrderUrl = serviceUrl + TRADING_URI + "/placeOrder";
+		this.placeTvOrderUrl = serviceUrl + TRADING_URI + "/placeTvOrder";
 		this.placeRegularOrderUrl = serviceUrl + TRADING_URI + "/placeRegularOrder";
 		this.placeCoverOrderUrl = serviceUrl + TRADING_URI + "/placeCoverOrder";
 		this.placeBracketOrderUrl = serviceUrl + TRADING_URI + "/placeBracketOrder";
@@ -127,6 +129,18 @@ public class TradingService implements ITradingService {
 
 		final HttpResponse<OperationResponse<String>> response = request.header("Content-Type", "application/json")
 				.body(order).asObject(new GenericType<OperationResponse<String>>() {
+				});
+
+		return this.processResponse(response);
+	}
+
+	@Override
+	public IOperationResponse<Boolean> placeTvOrder(@NonNull final String apiKey, final TvOrder order) {
+		final HttpRequestWithBody request = this.client.post(this.placeTvOrderUrl);
+		request.header(API_KEY_HEADER, apiKey);
+
+		final HttpResponse<OperationResponse<Boolean>> response = request.header("Content-Type", "application/json")
+				.body(order).asObject(new GenericType<OperationResponse<Boolean>>() {
 				});
 
 		return this.processResponse(response);
