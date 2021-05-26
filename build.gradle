@@ -29,6 +29,7 @@ dependencies {
 
 //create a single Jar with all dependencies
 task fatJar(type: Jar) {
+	setDuplicatesStrategy(DuplicatesStrategy.INCLUDE)	
 	manifest {
 		attributes 'Implementation-Title': 'AutoTrader Web Java API',
 		'Implementation-Version': archiveVersion
