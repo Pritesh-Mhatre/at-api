@@ -243,4 +243,11 @@ public interface IAutoTrader {
 	 */
 	IOperationResponse<String> autoTraderDesktopVersion();
 
+	/**
+	 * Gets the minimum version required of at-desktop client.
+	 *
+	 * @return at-desktop minimum version
+	 */
+	IOperationResponse<String> autoTraderDesktopMinVersion();
+
 }

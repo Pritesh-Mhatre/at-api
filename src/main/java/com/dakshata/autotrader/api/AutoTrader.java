@@ -174,6 +174,11 @@ public class AutoTrader implements IAutoTrader {
 		return this.tradingService.autoTraderDesktopVersion();
 	}
 
+	@Override
+	public IOperationResponse<String> autoTraderDesktopMinVersion() {
+		return this.tradingService.autoTraderDesktopMinVersion();
+	}
+
 	/**
 	 * Graceful shutdown. Call when your application is about to terminate.
 	 */
