@@ -44,3 +44,14 @@ test {
         excludeTags 'skip'
     }
 }
+
+// To publish to our maven repository hosted on github
+// gradle publishAllPublicationsToGithubRepository
+publishing {
+    repositories {
+        maven {
+			name = "github"
+            url = layout.projectDirectory.dir('../maven_repo')
+        }
+    }
+}
