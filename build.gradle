@@ -46,7 +46,13 @@ test {
 }
 
 // To publish to our maven repository hosted on github
-// gradle publishAllPublicationsToGithubRepository
+// 1. Update the project version
+// 2. Update the version of public-library project
+// 3. gradle publishAllPublicationsToGithubRepository
+// 4. Commit and push maven_repo project
+
+// project.version = '1.1.0'
+
 publishing {
     repositories {
         maven {
