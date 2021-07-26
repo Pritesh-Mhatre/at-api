@@ -105,14 +105,22 @@ public class TradingService implements ITradingService {
 		final HttpResponse<OperationResponse<? extends Object>> response = this.client.post(this.commandUrl)
 				.field("command", command).asObject(new GenericType<OperationResponse<? extends Object>>() {
 				});
-		if (response.getStatus() != 200) {
-			if (response.getParsingError().isPresent()) {
-				return OperationResponse.<Object>builder().error(response.getParsingError().get()).build();
+
+		if (response == null) {
+			return OperationResponse.<Object>builder().error(new Exception("Null response received from server"))
+					.build();
+		}
+		if (!response.isSuccess()) {
+			// Process parsing errors only when http status code is 200, otherwise for other
+			// errors there will always be parsing errors
+			if ((response.getStatus() == 200) && response.getParsingError().isPresent()) {
+				return this.processParsingError(response.getParsingError().get());
 			} else {
 				return this.processHttpError(response);
 			}
 		}
 
+		// If no errors, then return original response
 		return response.getBody();
 	}
 
