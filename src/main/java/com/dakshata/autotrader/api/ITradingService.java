@@ -17,6 +17,7 @@ import com.dakshata.trading.model.platform.PlatformOrder;
 import com.dakshata.trading.model.platform.PlatformPosition;
 import com.dakshata.trading.model.portfolio.IOrder;
 import com.dakshata.trading.model.tv.order.TvOrder;
+import com.dakshata.trading.model.tv.position.TvPosSqOff;
 
 /**
  * Responsible for trading activities.
@@ -192,6 +193,8 @@ public interface ITradingService {
 
 	IOperationResponse<Boolean> squareOffPosition(final String apiKey, final String pseudoAccount,
 			final PositionCategory category, final PositionType type, final String exchange, final String symbol);
+
+	IOperationResponse<Boolean> squareOffTvPosition(String apiKey, TvPosSqOff input);
 
 	/**
 	 * Submits a square-off portfolio request.

@@ -24,6 +24,7 @@ import com.dakshata.trading.model.platform.PlatformOrder;
 import com.dakshata.trading.model.platform.PlatformPosition;
 import com.dakshata.trading.model.portfolio.IOrder;
 import com.dakshata.trading.model.tv.order.TvOrder;
+import com.dakshata.trading.model.tv.position.TvPosSqOff;
 
 import kong.unirest.GenericType;
 import kong.unirest.HttpRequestWithBody;
@@ -59,7 +60,7 @@ public class TradingService implements ITradingService {
 
 	private final String cancelChildOrdersByPlatformIdUrl, cancelAllOrdersUrl;
 
-	private final String squareOffPositionUrl, squareOffPortfolioUrl;
+	private final String squareOffPositionUrl, squareOffTvPositionUrl, squareOffPortfolioUrl;
 
 	private final String autoTraderDesktopVersionUrl, autoTraderDesktopMinVersionUrl;
 
@@ -86,6 +87,7 @@ public class TradingService implements ITradingService {
 		this.modifyOrderByPlatformIdUrl = serviceUrl + TRADING_URI + "/modifyOrderByPlatformId";
 		this.livePseudoAccountsUrl = serviceUrl + ACCOUNT_URI + "/fetchLivePseudoAccounts";
 		this.squareOffPositionUrl = serviceUrl + TRADING_URI + "/squareOffPosition";
+		this.squareOffTvPositionUrl = serviceUrl + TRADING_URI + "/squareOffTvPosition";
 		this.squareOffPortfolioUrl = serviceUrl + TRADING_URI + "/squareOffPortfolio";
 		this.autoTraderDesktopVersionUrl = serviceUrl + TRADING_URI + "/autoTraderDesktopVersion";
 		this.autoTraderDesktopMinVersionUrl = serviceUrl + TRADING_URI + "/autoTraderDesktopMinVersion";
@@ -300,6 +302,19 @@ public class TradingService implements ITradingService {
 
 		final HttpResponse<OperationResponse<Boolean>> response = request.fields(params)
 				.asObject(new GenericType<OperationResponse<Boolean>>() {
+				});
+
+		return this.processResponse(response);
+	}
+
+	@Override
+	public IOperationResponse<Boolean> squareOffTvPosition(@NonNull final String apiKey,
+			@NonNull final TvPosSqOff input) {
+		final HttpRequestWithBody request = this.client.post(this.squareOffTvPositionUrl);
+		request.header(API_KEY_HEADER, apiKey);
+
+		final HttpResponse<OperationResponse<Boolean>> response = request.header("Content-Type", "application/json")
+				.body(input).asObject(new GenericType<OperationResponse<Boolean>>() {
 				});
 
 		return this.processResponse(response);
