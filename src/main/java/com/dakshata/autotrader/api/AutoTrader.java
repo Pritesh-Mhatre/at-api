@@ -192,7 +192,7 @@ public class AutoTrader implements IAutoTrader {
 		config.setDefaultHeader(API_KEY_HEADER, apiKey);
 		// Spring boot uses Jackson by default, hence we use jackson here
 		config.setObjectMapper(new JacksonObjectMapper());
-		config.connectTimeout(DEFAULT_CONNECTION_TIMEOUT * 2);
+		config.connectTimeout(DEFAULT_CONNECTION_TIMEOUT * 3);
 		config.socketTimeout(DEFAULT_SOCKET_TIMEOUT * 2);
 		// Disable ssl verification to improve performance (as we are connecting to our
 		// own servers). This will not stop ssl connection, it will only skip
