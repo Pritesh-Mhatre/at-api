@@ -17,7 +17,7 @@ java {
 
 dependencies {
 
-	api 'com.dakshata:public-library:1.2.0'
+	api 'com.dakshata:public-library:1.0.0'
 	api 'com.konghq:unirest-java:3.9.00'
 	api 'com.konghq:unirest-objectmapper-jackson:3.4.01'
 
