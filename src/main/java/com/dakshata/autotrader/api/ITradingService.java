@@ -3,6 +3,7 @@
  */
 package com.dakshata.autotrader.api;
 
+import java.util.List;
 import java.util.Set;
 
 import com.dakshata.constants.trading.OrderType;
@@ -10,6 +11,8 @@ import com.dakshata.constants.trading.PositionCategory;
 import com.dakshata.constants.trading.PositionType;
 import com.dakshata.constants.trading.ProductType;
 import com.dakshata.constants.trading.TradeType;
+import com.dakshata.data.model.autotrader.web.SellHoldingsRequest;
+import com.dakshata.data.model.autotrader.web.SellHoldingsResponse;
 import com.dakshata.data.model.common.IOperationResponse;
 import com.dakshata.trading.model.platform.PlatformHolding;
 import com.dakshata.trading.model.platform.PlatformMargin;
@@ -253,6 +256,15 @@ public interface ITradingService {
 	 * @return holdings trading platform holdings
 	 */
 	IOperationResponse<Set<PlatformHolding>> readPlatformHoldings(final String pseudoAccount);
+
+	/**
+	 * Used for selling holdings.
+	 *
+	 * @param apiKey  api key
+	 * @param request sell holdings request
+	 * @return order ids
+	 */
+	IOperationResponse<List<SellHoldingsResponse>> sellHoldings(final String apiKey, final SellHoldingsRequest request);
 
 	/**
 	 * Gets the latest version of at-desktop client.

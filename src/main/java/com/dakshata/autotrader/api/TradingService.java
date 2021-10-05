@@ -8,6 +8,7 @@ import static com.dakshata.tools.internet.HttpStatus.toTextDefault;
 import static com.dakshata.tools.string.StringUtil.isEmpty;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,6 +17,8 @@ import com.dakshata.constants.trading.PositionCategory;
 import com.dakshata.constants.trading.PositionType;
 import com.dakshata.constants.trading.ProductType;
 import com.dakshata.constants.trading.TradeType;
+import com.dakshata.data.model.autotrader.web.SellHoldingsRequest;
+import com.dakshata.data.model.autotrader.web.SellHoldingsResponse;
 import com.dakshata.data.model.common.IOperationResponse;
 import com.dakshata.data.model.common.OperationResponse;
 import com.dakshata.trading.model.platform.PlatformHolding;
@@ -60,7 +63,7 @@ public class TradingService implements ITradingService {
 
 	private final String cancelChildOrdersByPlatformIdUrl, cancelAllOrdersUrl;
 
-	private final String squareOffPositionUrl, squareOffTvPositionUrl, squareOffPortfolioUrl;
+	private final String squareOffPositionUrl, squareOffTvPositionUrl, squareOffPortfolioUrl, squareOffHoldingsUrl;
 
 	private final String autoTraderDesktopVersionUrl, autoTraderDesktopMinVersionUrl;
 
@@ -89,6 +92,7 @@ public class TradingService implements ITradingService {
 		this.squareOffPositionUrl = serviceUrl + TRADING_URI + "/squareOffPosition";
 		this.squareOffTvPositionUrl = serviceUrl + TRADING_URI + "/squareOffTvPosition";
 		this.squareOffPortfolioUrl = serviceUrl + TRADING_URI + "/squareOffPortfolio";
+		this.squareOffHoldingsUrl = serviceUrl + TRADING_URI + "/sellHoldings";
 		this.autoTraderDesktopVersionUrl = serviceUrl + TRADING_URI + "/autoTraderDesktopVersion";
 		this.autoTraderDesktopMinVersionUrl = serviceUrl + TRADING_URI + "/autoTraderDesktopMinVersion";
 	}
@@ -457,6 +461,20 @@ public class TradingService implements ITradingService {
 		final HttpResponse<OperationResponse<String>> response = this.client.get(this.autoTraderDesktopMinVersionUrl)
 				.asObject(new GenericType<OperationResponse<String>>() {
 				});
+		return this.processResponse(response);
+	}
+
+	@Override
+	public IOperationResponse<List<SellHoldingsResponse>> sellHoldings(final String apiKey,
+			final SellHoldingsRequest input) {
+		final HttpRequestWithBody request = this.client.post(this.squareOffHoldingsUrl);
+		request.header(API_KEY_HEADER, apiKey);
+
+		final HttpResponse<OperationResponse<List<SellHoldingsResponse>>> response = request
+				.header("Content-Type", "application/json").body(input)
+				.asObject(new GenericType<OperationResponse<List<SellHoldingsResponse>>>() {
+				});
+
 		return this.processResponse(response);
 	}
 
