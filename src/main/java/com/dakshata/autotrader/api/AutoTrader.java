@@ -42,6 +42,10 @@ public class AutoTrader implements IAutoTrader {
 
 	private static final Map<String, AutoTrader> INSTANCES = synchronizedMap(new HashMap<>());
 
+	private static final int MAX_CONNECTIONS = 250;
+
+	private static final int MAX_CONN_PER_ROUTE = 200;
+
 	private final TradingService tradingService;
 
 	/**
@@ -194,6 +198,7 @@ public class AutoTrader implements IAutoTrader {
 		config.setObjectMapper(new JacksonObjectMapper());
 		config.connectTimeout(DEFAULT_CONNECTION_TIMEOUT * 3);
 		config.socketTimeout(DEFAULT_SOCKET_TIMEOUT * 2);
+		config.concurrency(MAX_CONNECTIONS, MAX_CONN_PER_ROUTE);
 		// Disable ssl verification to improve performance (as we are connecting to our
 		// own servers). This will not stop ssl connection, it will only skip
 		// verification.
