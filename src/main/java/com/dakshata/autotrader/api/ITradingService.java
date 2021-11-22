@@ -11,8 +11,8 @@ import com.dakshata.constants.trading.PositionCategory;
 import com.dakshata.constants.trading.PositionType;
 import com.dakshata.constants.trading.ProductType;
 import com.dakshata.constants.trading.TradeType;
-import com.dakshata.data.model.autotrader.web.SellHoldingsRequest;
-import com.dakshata.data.model.autotrader.web.SellHoldingsResponse;
+import com.dakshata.data.model.autotrader.web.AdjustHoldingsRequest;
+import com.dakshata.data.model.autotrader.web.AdjustHoldingsResponse;
 import com.dakshata.data.model.common.IOperationResponse;
 import com.dakshata.trading.model.platform.PlatformHolding;
 import com.dakshata.trading.model.platform.PlatformMargin;
@@ -258,13 +258,14 @@ public interface ITradingService {
 	IOperationResponse<Set<PlatformHolding>> readPlatformHoldings(final String pseudoAccount);
 
 	/**
-	 * Used for selling holdings.
+	 * Used for selling or adding to holdings.
 	 *
 	 * @param apiKey  api key
 	 * @param request sell holdings request
 	 * @return order ids
 	 */
-	IOperationResponse<List<SellHoldingsResponse>> sellHoldings(final String apiKey, final SellHoldingsRequest request);
+	IOperationResponse<List<AdjustHoldingsResponse>> adjustHoldings(final String apiKey,
+			final AdjustHoldingsRequest request);
 
 	/**
 	 * Gets the latest version of at-desktop client.
