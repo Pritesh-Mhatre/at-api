@@ -51,7 +51,7 @@ test {
 // 3. gradle publishAllPublicationsToGithubRepository
 // 4. Commit and push maven_repo project
 
-//project.version = '1.2.2'
+//project.version = '1.3.0'
 
 publishing {
     repositories {
