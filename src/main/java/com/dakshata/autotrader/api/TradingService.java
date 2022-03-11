@@ -17,6 +17,7 @@ import com.dakshata.constants.trading.PositionCategory;
 import com.dakshata.constants.trading.PositionType;
 import com.dakshata.constants.trading.ProductType;
 import com.dakshata.constants.trading.TradeType;
+import com.dakshata.constants.trading.Validity;
 import com.dakshata.data.model.autotrader.web.AdjustHoldingsRequest;
 import com.dakshata.data.model.autotrader.web.AdjustHoldingsResponse;
 import com.dakshata.data.model.common.IOperationResponse;
@@ -57,7 +58,8 @@ public class TradingService implements ITradingService {
 	private final String readPlatformOrdersUrl, readPlatformPositionsUrl, readPlatformMarginsUrl,
 			readPlatformHoldingsUrl;
 
-	private final String placeOrderUrl, placeTvOrderUrl, placeRegularOrderUrl, placeCoverOrderUrl, placeBracketOrderUrl;
+	private final String placeOrderUrl, placeTvOrderUrl, placeRegularOrderUrl, placeCoverOrderUrl, placeBracketOrderUrl,
+			placeAdvancedOrderUrl;
 
 	private final String cancelOrderByPlatformIdUrl, modifyOrderByPlatformIdUrl;
 
@@ -84,6 +86,7 @@ public class TradingService implements ITradingService {
 		this.placeRegularOrderUrl = serviceUrl + TRADING_URI + "/placeRegularOrder";
 		this.placeCoverOrderUrl = serviceUrl + TRADING_URI + "/placeCoverOrder";
 		this.placeBracketOrderUrl = serviceUrl + TRADING_URI + "/placeBracketOrder";
+		this.placeAdvancedOrderUrl = serviceUrl + TRADING_URI + "/placeAdvancedOrder";
 		this.cancelOrderByPlatformIdUrl = serviceUrl + TRADING_URI + "/cancelOrderByPlatformId";
 		this.cancelChildOrdersByPlatformIdUrl = serviceUrl + TRADING_URI + "/cancelChildOrdersByPlatformId";
 		this.cancelAllOrdersUrl = serviceUrl + TRADING_URI + "/cancelAllOrders";
@@ -216,6 +219,29 @@ public class TradingService implements ITradingService {
 		params.put("triggerPrice", triggerPrice);
 
 		return this.postOrder(this.placeCoverOrderUrl, params);
+	}
+
+	@Override
+	public IOperationResponse<String> placeChildOrder(final String pseudoAccount, final String exchange,
+			final String symbol, final TradeType tradeType, final OrderType orderType, final ProductType productType,
+			final int quantity, final float price, final float triggerPrice, final Validity validity, final Boolean amo,
+			final String publisherId, final String commandId) {
+		final Map<String, Object> params = new HashMap<>();
+		params.put("pseudoAccount", pseudoAccount);
+		params.put("exchange", exchange);
+		params.put("symbol", symbol);
+		params.put("tradeType", tradeType);
+		params.put("orderType", orderType);
+		params.put("productType", productType);
+		params.put("quantity", quantity);
+		params.put("price", price);
+		params.put("triggerPrice", triggerPrice);
+		params.put("validity", validity);
+		params.put("amo", amo);
+		params.put("publisherId", publisherId);
+		params.put("commandId", commandId);
+
+		return this.postOrder(this.placeAdvancedOrderUrl, params);
 	}
 
 	@Override
@@ -352,6 +378,17 @@ public class TradingService implements ITradingService {
 	public IOperationResponse<Set<PlatformOrder>> readPlatformOrders(@NonNull final String pseudoAccount) {
 		final HttpResponse<OperationResponse<Set<PlatformOrder>>> response = this.client
 				.post(this.readPlatformOrdersUrl).field("pseudoAccount", pseudoAccount)
+				.asObject(new GenericType<OperationResponse<Set<PlatformOrder>>>() {
+				});
+
+		return this.processResponse(response);
+	}
+
+	@Override
+	public IOperationResponse<Set<PlatformOrder>> readPlatformOrders(@NonNull final String apiKey,
+			@NonNull final String pseudoAccount) {
+		final HttpResponse<OperationResponse<Set<PlatformOrder>>> response = this.client
+				.post(this.readPlatformOrdersUrl).field("pseudoAccount", pseudoAccount).header(API_KEY_HEADER, apiKey)
 				.asObject(new GenericType<OperationResponse<Set<PlatformOrder>>>() {
 				});
 

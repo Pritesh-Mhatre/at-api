@@ -11,6 +11,7 @@ import com.dakshata.constants.trading.PositionCategory;
 import com.dakshata.constants.trading.PositionType;
 import com.dakshata.constants.trading.ProductType;
 import com.dakshata.constants.trading.TradeType;
+import com.dakshata.constants.trading.Validity;
 import com.dakshata.data.model.autotrader.web.AdjustHoldingsRequest;
 import com.dakshata.data.model.autotrader.web.AdjustHoldingsResponse;
 import com.dakshata.data.model.common.IOperationResponse;
@@ -118,6 +119,13 @@ public interface ITradingService {
 	 */
 	IOperationResponse<String> placeCoverOrder(String pseudoAccount, String exchange, String symbol,
 			TradeType tradeType, OrderType orderType, int quantity, float price, float triggerPrice);
+
+	/**
+	 * This is for internal use. It is used in master-child order copying process.
+	 */
+	IOperationResponse<String> placeChildOrder(String pseudoAccount, String exchange, String symbol,
+			TradeType tradeType, OrderType orderType, ProductType productType, int quantity, float price,
+			float triggerPrice, Validity validity, Boolean amo, String publisherId, String commandId);
 
 	/**
 	 * Cancels all open orders for the given account. For more information, please
@@ -229,6 +237,8 @@ public interface ITradingService {
 	 * @return orders trading platform orders
 	 */
 	IOperationResponse<Set<PlatformOrder>> readPlatformOrders(final String pseudoAccount);
+
+	IOperationResponse<Set<PlatformOrder>> readPlatformOrders(String apiKey, final String pseudoAccount);
 
 	/**
 	 * Read trading platform positions from the trading account mapped to the given
