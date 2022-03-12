@@ -222,10 +222,10 @@ public class TradingService implements ITradingService {
 	}
 
 	@Override
-	public IOperationResponse<String> placeChildOrder(final String pseudoAccount, final String exchange,
-			final String symbol, final TradeType tradeType, final OrderType orderType, final ProductType productType,
-			final int quantity, final float price, final float triggerPrice, final Validity validity, final Boolean amo,
-			final String publisherId, final String commandId) {
+	public IOperationResponse<String> placeChildOrder(final String apiKey, final String pseudoAccount,
+			final String exchange, final String symbol, final TradeType tradeType, final OrderType orderType,
+			final ProductType productType, final int quantity, final float price, final float triggerPrice,
+			final Validity validity, final Boolean amo, final String publisherId, final String commandId) {
 		final Map<String, Object> params = new HashMap<>();
 		params.put("pseudoAccount", pseudoAccount);
 		params.put("exchange", exchange);
@@ -241,7 +241,11 @@ public class TradingService implements ITradingService {
 		params.put("publisherId", publisherId);
 		params.put("commandId", commandId);
 
-		return this.postOrder(this.placeAdvancedOrderUrl, params);
+		final HttpResponse<OperationResponse<String>> response = this.client.post(this.placeAdvancedOrderUrl)
+				.header(API_KEY_HEADER, apiKey).fields(params).asObject(new GenericType<OperationResponse<String>>() {
+				});
+
+		return this.processResponse(response);
 	}
 
 	@Override
@@ -307,6 +311,12 @@ public class TradingService implements ITradingService {
 	public IOperationResponse<Boolean> cancelChildOrdersByPlatformId(final String apiKey, final String pseudoAccount,
 			final String platformId) {
 		return this.cancelGeneric(this.cancelChildOrdersByPlatformIdUrl, apiKey, pseudoAccount, platformId);
+	}
+
+	@Override
+	public IOperationResponse<Boolean> cancelChildOrderByPlatformId(final String apiKey, final String pseudoAccount,
+			final String platformId, final String commandId) {
+		return this.cancelGeneric(this.cancelChildOrdersByPlatformIdUrl, apiKey, pseudoAccount, platformId, commandId);
 	}
 
 	@Override
@@ -467,10 +477,18 @@ public class TradingService implements ITradingService {
 
 	private IOperationResponse<Boolean> cancelGeneric(final String url, final String apiKey, final String pseudoAccount,
 			final String platformId) {
+		return this.cancelGeneric(url, apiKey, pseudoAccount, platformId, null);
+	}
+
+	private IOperationResponse<Boolean> cancelGeneric(final String url, final String apiKey, final String pseudoAccount,
+			final String platformId, final String commandId) {
 		final Map<String, Object> params = new HashMap<>();
 		params.put("pseudoAccount", pseudoAccount);
 		if (platformId != null) {
 			params.put("platformId", platformId);
+		}
+		if (commandId != null) {
+			params.put("commandId", commandId);
 		}
 
 		final HttpRequestWithBody request = this.client.post(url);
