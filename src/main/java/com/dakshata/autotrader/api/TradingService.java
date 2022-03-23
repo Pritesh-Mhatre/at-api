@@ -4,6 +4,7 @@
 package com.dakshata.autotrader.api;
 
 import static com.dakshata.constants.autotrader.IAutoTrader.API_KEY_HEADER;
+import static com.dakshata.constants.trading.Variety.REGULAR;
 import static com.dakshata.tools.internet.HttpStatus.toTextDefault;
 import static com.dakshata.tools.string.StringUtil.isEmpty;
 
@@ -227,6 +228,7 @@ public class TradingService implements ITradingService {
 			final ProductType productType, final int quantity, final float price, final float triggerPrice,
 			final Validity validity, final Boolean amo, final String publisherId, final String commandId) {
 		final Map<String, Object> params = new HashMap<>();
+		params.put("variety", REGULAR);
 		params.put("pseudoAccount", pseudoAccount);
 		params.put("exchange", exchange);
 		params.put("symbol", symbol);
