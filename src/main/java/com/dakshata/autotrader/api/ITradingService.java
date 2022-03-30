@@ -121,13 +121,6 @@ public interface ITradingService {
 			TradeType tradeType, OrderType orderType, int quantity, float price, float triggerPrice);
 
 	/**
-	 * This is for internal use. It is used by master-child order copying process.
-	 */
-	IOperationResponse<String> placeChildOrder(String apiKey, String pseudoAccount, String exchange, String symbol,
-			TradeType tradeType, OrderType orderType, ProductType productType, int quantity, float price,
-			float triggerPrice, Validity validity, Boolean amo, String publisherId, String commandId);
-
-	/**
 	 * Cancels all open orders for the given account. For more information, please
 	 * see
 	 * <a href="https://stocksdeveloper.in/documentation/api/cancel-all-orders/">api
@@ -152,12 +145,6 @@ public interface ITradingService {
 	IOperationResponse<Boolean> cancelOrderByPlatformId(String pseudoAccount, String platformId);
 
 	IOperationResponse<Boolean> cancelOrderByPlatformId(String apiKey, String pseudoAccount, String platformId);
-
-	/**
-	 * This is for internal use. It is used by master-child order copying process.
-	 */
-	IOperationResponse<Boolean> cancelChildOrderByPlatformId(String apiKey, String pseudoAccount, String platformId,
-			String commandId);
 
 	/**
 	 * Used for exiting an open Bracket order or Cover order position. Cancels the
@@ -296,5 +283,18 @@ public interface ITradingService {
 	 * @return at-desktop minimum version
 	 */
 	IOperationResponse<String> autoTraderDesktopMinVersion();
+
+	/**
+	 * This is for internal use. It is used by master-child order copying process.
+	 */
+	IOperationResponse<String> placeOrderMCA(String apiKey, String pseudoAccount, String exchange, String symbol,
+			TradeType tradeType, OrderType orderType, ProductType productType, int quantity, float price,
+			float triggerPrice, Validity validity, Boolean amo, String publisherId, String commandId);
+
+	/**
+	 * This is for internal use. It is used by master-child order copying process.
+	 */
+	IOperationResponse<Boolean> cancelOrderMCA(String apiKey, String pseudoAccount, String platformId,
+			String commandId);
 
 }
