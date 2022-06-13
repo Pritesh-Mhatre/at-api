@@ -3,10 +3,9 @@
  */
 package com.dakshata.autotrader.api;
 
+import static com.dakshata.autotrader.api.AutoTraderClientConfig.defaultConfig;
 import static com.dakshata.constants.autotrader.IAutoTrader.API_KEY_HEADER;
 import static java.util.Collections.synchronizedMap;
-import static kong.unirest.Config.DEFAULT_CONNECTION_TIMEOUT;
-import static kong.unirest.Config.DEFAULT_SOCKET_TIMEOUT;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,10 +41,6 @@ public class AutoTrader implements IAutoTrader {
 
 	private static final Map<String, AutoTrader> INSTANCES = synchronizedMap(new HashMap<>());
 
-	private static final int MAX_CONNECTIONS = 250;
-
-	private static final int MAX_CONN_PER_ROUTE = 200;
-
 	private final TradingService tradingService;
 
 	/**
@@ -54,20 +49,23 @@ public class AutoTrader implements IAutoTrader {
 	 * @param apiKey     your private api key
 	 * @param serviceUrl AutoTrader api service url
 	 */
-	private AutoTrader(final String apiKey, final String serviceUrl) {
+	private AutoTrader(@NonNull final AutoTraderClientConfig config) {
 		super();
-		this.tradingService = new TradingService(serviceUrl, this.prepareClient(apiKey));
+		this.tradingService = new TradingService(config.getServiceUrl(), this.prepareClient(config),
+				config.isAutoRetryOnError());
 	}
 
-	public static final synchronized IAutoTrader createInstance(@NonNull final String apiKey,
-			@NonNull final String serviceUrl) {
-		AutoTrader instance = INSTANCES.get(apiKey);
+	public static final synchronized IAutoTrader createInstance(@NonNull final AutoTraderClientConfig config) {
+		AutoTrader instance = INSTANCES.get(config.getApiKey());
 		if (instance == null) {
-			instance = new AutoTrader(apiKey, serviceUrl);
-			INSTANCES.put(apiKey, instance);
+			instance = new AutoTrader(config);
+			INSTANCES.put(config.getApiKey(), instance);
 		}
-
 		return instance;
+	}
+
+	public static final IAutoTrader createInstance(@NonNull final String apiKey) {
+		return createInstance(defaultConfig(apiKey));
 	}
 
 	@Override
@@ -167,13 +165,6 @@ public class AutoTrader implements IAutoTrader {
 	}
 
 	@Override
-	public synchronized void setApiKey(@NonNull final String apiKey) {
-		this.shutdownClient(this.tradingService.getClient());
-		final UnirestInstance client = this.prepareClient(apiKey);
-		this.tradingService.setClient(client);
-	}
-
-	@Override
 	public IOperationResponse<String> autoTraderDesktopVersion() {
 		return this.tradingService.autoTraderDesktopVersion();
 	}
@@ -191,14 +182,14 @@ public class AutoTrader implements IAutoTrader {
 		this.shutdownClient(this.tradingService.getClient());
 	}
 
-	private final UnirestInstance prepareClient(final String apiKey) {
+	private final UnirestInstance prepareClient(final AutoTraderClientConfig atConfig) {
 		final Config config = new Config();
-		config.setDefaultHeader(API_KEY_HEADER, apiKey);
+		config.setDefaultHeader(API_KEY_HEADER, atConfig.getApiKey());
 		// Spring boot uses Jackson by default, hence we use jackson here
 		config.setObjectMapper(new JacksonObjectMapper());
-		config.connectTimeout(DEFAULT_CONNECTION_TIMEOUT * 3);
-		config.socketTimeout(DEFAULT_SOCKET_TIMEOUT * 2);
-		config.concurrency(MAX_CONNECTIONS, MAX_CONN_PER_ROUTE);
+		config.connectTimeout(atConfig.getConnectTimeout());
+		config.socketTimeout(atConfig.getSocketTimeout());
+		config.concurrency(atConfig.getMaxConnections(), atConfig.getMaxConnectionsPerRoute());
 		// Disable ssl verification to improve performance (as we are connecting to our
 		// own servers). This will not stop ssl connection, it will only skip
 		// verification.

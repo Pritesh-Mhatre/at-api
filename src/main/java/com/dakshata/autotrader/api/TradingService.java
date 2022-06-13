@@ -74,7 +74,7 @@ public class TradingService implements ITradingService {
 	@Setter
 	private UnirestInstance client;
 
-	public TradingService(final String serviceUrl, final UnirestInstance client) {
+	public TradingService(final String serviceUrl, final UnirestInstance client, final boolean autoRetryOnError) {
 		super();
 		this.client = client;
 		this.commandUrl = serviceUrl + COMMAND_URI + "/execute";
@@ -99,6 +99,10 @@ public class TradingService implements ITradingService {
 		this.adjustHoldingsUrl = serviceUrl + TRADING_URI + "/adjustHoldings";
 		this.autoTraderDesktopVersionUrl = serviceUrl + TRADING_URI + "/autoTraderDesktopVersion";
 		this.autoTraderDesktopMinVersionUrl = serviceUrl + TRADING_URI + "/autoTraderDesktopMinVersion";
+	}
+
+	public TradingService(final String serviceUrl, final UnirestInstance client) {
+		this(serviceUrl, client, false);
 	}
 
 	@Override
