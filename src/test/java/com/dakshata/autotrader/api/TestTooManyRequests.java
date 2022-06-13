@@ -22,8 +22,8 @@ import com.dakshata.data.model.common.IOperationResponse;
  */
 public class TestTooManyRequests {
 
-	private static IAutoTrader AT = AutoTrader.createInstance("b25f5e2f-93cb-430e-a81d-f960a490034f",
-			"http://localhost:9017");
+	private static IAutoTrader AT = AutoTrader.createInstance(AutoTraderClientConfig.builder()
+			.apiKey("b25f5e2f-93cb-430e-a81d-f960a490034f").serviceUrl("http://localhost:9017").build());
 
 	private static final String ACC = "FA8768";
 
