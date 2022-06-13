@@ -204,7 +204,7 @@ public class AutoTrader implements IAutoTrader {
 		return new UnirestInstance(config);
 	}
 
-	public void shutdownClient(final UnirestInstance client) {
+	private void shutdownClient(final UnirestInstance client) {
 		try {
 			if (client != null) {
 				client.shutDown();
