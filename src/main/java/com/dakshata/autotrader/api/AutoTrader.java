@@ -10,6 +10,9 @@ import static java.util.Collections.synchronizedMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
+
+import org.apache.http.NoHttpResponseException;
 
 import com.dakshata.constants.trading.OrderType;
 import com.dakshata.constants.trading.PositionCategory;
@@ -43,6 +46,8 @@ public class AutoTrader implements IAutoTrader {
 
 	private final TradingService tradingService;
 
+	private final boolean autoRetryOnError;
+
 	/**
 	 * Initialize the AutoTrader API with your private API key.
 	 *
@@ -51,8 +56,8 @@ public class AutoTrader implements IAutoTrader {
 	 */
 	private AutoTrader(@NonNull final AutoTraderClientConfig config) {
 		super();
-		this.tradingService = new TradingService(config.getServiceUrl(), this.prepareClient(config),
-				config.isAutoRetryOnError());
+		this.autoRetryOnError = config.isAutoRetryOnError();
+		this.tradingService = new TradingService(config.getServiceUrl(), this.prepareClient(config));
 	}
 
 	public static final synchronized IAutoTrader createInstance(@NonNull final AutoTraderClientConfig config) {
@@ -70,17 +75,17 @@ public class AutoTrader implements IAutoTrader {
 
 	@Override
 	public IOperationResponse<Set<String>> fetchLivePseudoAccounts() {
-		return this.tradingService.fetchLivePseudoAccounts();
+		return this.executeWithRetry(() -> this.tradingService.fetchLivePseudoAccounts());
 	}
 
 	@Override
 	public IOperationResponse<? extends Object> execute(@NonNull final String command) {
-		return this.tradingService.execute(command);
+		return this.executeWithRetry(() -> this.tradingService.execute(command));
 	}
 
 	@Override
 	public IOperationResponse<String> placeOrder(@NonNull final Order order) {
-		return this.tradingService.placeOrder(order);
+		return this.executeWithRetry(() -> this.tradingService.placeOrder(order));
 	}
 
 	@Override
@@ -88,8 +93,8 @@ public class AutoTrader implements IAutoTrader {
 			final @NonNull String exchange, @NonNull final String symbol, @NonNull final TradeType tradeType,
 			@NonNull final OrderType orderType, @NonNull final ProductType productType, final int quantity,
 			final float price, final float triggerPrice) {
-		return this.tradingService.placeRegularOrder(pseudoAccount, exchange, symbol, tradeType, orderType, productType,
-				quantity, price, triggerPrice);
+		return this.executeWithRetry(() -> this.tradingService.placeRegularOrder(pseudoAccount, exchange, symbol,
+				tradeType, orderType, productType, quantity, price, triggerPrice));
 	}
 
 	@Override
@@ -97,81 +102,83 @@ public class AutoTrader implements IAutoTrader {
 			@NonNull final String exchange, @NonNull final String symbol, @NonNull final TradeType tradeType,
 			@NonNull final OrderType orderType, final int quantity, final float price, final float triggerPrice,
 			final float target, final float stoploss, final float trailingStoploss) {
-		return this.tradingService.placeBracketOrder(pseudoAccount, exchange, symbol, tradeType, orderType, quantity,
-				price, triggerPrice, target, stoploss, trailingStoploss);
+		return this.executeWithRetry(() -> this.tradingService.placeBracketOrder(pseudoAccount, exchange, symbol,
+				tradeType, orderType, quantity, price, triggerPrice, target, stoploss, trailingStoploss));
 	}
 
 	@Override
 	public IOperationResponse<String> placeCoverOrder(@NonNull final String pseudoAccount,
 			@NonNull final String exchange, @NonNull final String symbol, @NonNull final TradeType tradeType,
 			@NonNull final OrderType orderType, final int quantity, final float price, final float triggerPrice) {
-		return this.tradingService.placeCoverOrder(pseudoAccount, exchange, symbol, tradeType, orderType, quantity,
-				price, triggerPrice);
+		return this.executeWithRetry(() -> this.tradingService.placeCoverOrder(pseudoAccount, exchange, symbol,
+				tradeType, orderType, quantity, price, triggerPrice));
 	}
 
 	@Override
 	public IOperationResponse<Boolean> cancelAllOrders(final String pseudoAccount) {
-		return this.tradingService.cancelAllOrders(pseudoAccount);
+		return this.executeWithRetry(() -> this.tradingService.cancelAllOrders(pseudoAccount));
 	}
 
 	@Override
 	public IOperationResponse<Boolean> cancelOrderByPlatformId(@NonNull final String pseudoAccount,
 			@NonNull final String platformId) {
-		return this.tradingService.cancelOrderByPlatformId(pseudoAccount, platformId);
+		return this.executeWithRetry(() -> this.tradingService.cancelOrderByPlatformId(pseudoAccount, platformId));
 	}
 
 	@Override
 	public IOperationResponse<Boolean> cancelChildOrdersByPlatformId(@NonNull final String pseudoAccount,
 			@NonNull final String platformId) {
-		return this.tradingService.cancelChildOrdersByPlatformId(pseudoAccount, platformId);
+		return this
+				.executeWithRetry(() -> this.tradingService.cancelChildOrdersByPlatformId(pseudoAccount, platformId));
 	}
 
 	@Override
 	public IOperationResponse<Boolean> modifyOrderByPlatformId(final String pseudoAccount, final String platformId,
 			final OrderType orderType, final Integer quantity, final Float price, final Float triggerPrice) {
-		return this.tradingService.modifyOrderByPlatformId(pseudoAccount, platformId, orderType, quantity, price,
-				triggerPrice);
+		return this.executeWithRetry(() -> this.tradingService.modifyOrderByPlatformId(pseudoAccount, platformId,
+				orderType, quantity, price, triggerPrice));
 	}
 
 	@Override
 	public IOperationResponse<Boolean> squareOffPosition(final String pseudoAccount, final PositionCategory category,
 			final PositionType type, final String exchange, final String symbol) {
-		return this.tradingService.squareOffPosition(pseudoAccount, category, type, exchange, symbol);
+		return this.executeWithRetry(
+				() -> this.tradingService.squareOffPosition(pseudoAccount, category, type, exchange, symbol));
 	}
 
 	@Override
 	public IOperationResponse<Boolean> squareOffPortfolio(final String pseudoAccount, final PositionCategory category) {
-		return this.tradingService.squareOffPortfolio(pseudoAccount, category);
+		return this.executeWithRetry(() -> this.tradingService.squareOffPortfolio(pseudoAccount, category));
 	}
 
 	@Override
 	public IOperationResponse<Set<PlatformOrder>> readPlatformOrders(@NonNull final String pseudoAccount) {
-		return this.tradingService.readPlatformOrders(pseudoAccount);
+		return this.executeWithRetry(() -> this.tradingService.readPlatformOrders(pseudoAccount));
 	}
 
 	@Override
 	public IOperationResponse<Set<PlatformPosition>> readPlatformPositions(@NonNull final String pseudoAccount) {
-		return this.tradingService.readPlatformPositions(pseudoAccount);
+		return this.executeWithRetry(() -> this.tradingService.readPlatformPositions(pseudoAccount));
 	}
 
 	@Override
 	public IOperationResponse<Set<PlatformMargin>> readPlatformMargins(@NonNull final String pseudoAccount) {
-		return this.tradingService.readPlatformMargins(pseudoAccount);
+		return this.executeWithRetry(() -> this.tradingService.readPlatformMargins(pseudoAccount));
 	}
 
 	@Override
 	public IOperationResponse<Set<PlatformHolding>> readPlatformHoldings(@NonNull final String pseudoAccount) {
-		return this.tradingService.readPlatformHoldings(pseudoAccount);
+		return this.executeWithRetry(() -> this.tradingService.readPlatformHoldings(pseudoAccount));
 	}
 
 	@Override
 	public IOperationResponse<String> autoTraderDesktopVersion() {
-		return this.tradingService.autoTraderDesktopVersion();
+		return this.executeWithRetry(() -> this.tradingService.autoTraderDesktopVersion());
 	}
 
 	@Override
 	public IOperationResponse<String> autoTraderDesktopMinVersion() {
-		return this.tradingService.autoTraderDesktopMinVersion();
+		return this.executeWithRetry(() -> this.tradingService.autoTraderDesktopMinVersion());
 	}
 
 	/**
@@ -206,4 +213,40 @@ public class AutoTrader implements IAutoTrader {
 			log.error("Error while shutting down client: ", e);
 		}
 	}
+
+	private <R> R executeWithRetry(final Supplier<R> f) {
+		try {
+			return f.get();
+		} catch (final Exception e) {
+			if (this.shouldRetry(e)) {
+				// Retry
+				log.error("AT-ERR-048: Retrying on error: {}", e.getMessage());
+				return f.get();
+			} else {
+				throw e;
+			}
+		}
+	}
+
+	private boolean shouldRetry(final Exception e) {
+		if (!this.autoRetryOnError) {
+			return false;
+		}
+
+		final Throwable c = e.getCause();
+
+		// It is generally considered safe to retry on NoHttpResponseException
+		// https://hc.apache.org/httpclient-legacy/exception-handling.html
+		boolean result = (e instanceof NoHttpResponseException);
+		if (!result && (c != null)) {
+			result = (c instanceof NoHttpResponseException);
+		}
+
+		if (!result && (c.getCause() != null)) {
+			result = (c.getCause() instanceof NoHttpResponseException);
+		}
+
+		return result;
+	}
+
 }
