@@ -220,7 +220,7 @@ public class AutoTrader implements IAutoTrader {
 		} catch (final Exception e) {
 			if (this.shouldRetry(e)) {
 				// Retry
-				log.error("AT-ERR-048: Retrying on error: {}", e.getMessage());
+				log.error("SD-ERR-048: Retrying on error: {}", e.getMessage());
 				return f.get();
 			} else {
 				throw e;
