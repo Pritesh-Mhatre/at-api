@@ -25,7 +25,11 @@ import com.dakshata.trading.model.portfolio.Order;
  */
 public interface IAutoTrader {
 
-	String SERVER_URL = "https://api.stocksdeveloper.in";
+	String PRIMARY_SERVER_URL = "https://apix.stocksdeveloper.in";
+
+	String BACKUP_SERVER_URL = "https://api.stocksdeveloper.in";
+
+	String SERVER_URL = PRIMARY_SERVER_URL;
 
 	/**
 	 * Provides live pseudo accounts available under your user.
