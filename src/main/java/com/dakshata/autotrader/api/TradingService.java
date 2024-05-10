@@ -13,12 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.dakshata.constants.trading.OrderType;
-import com.dakshata.constants.trading.PositionCategory;
-import com.dakshata.constants.trading.PositionType;
-import com.dakshata.constants.trading.ProductType;
-import com.dakshata.constants.trading.TradeType;
-import com.dakshata.constants.trading.Validity;
+import com.dakshata.constants.trading.*;
 import com.dakshata.data.model.autotrader.web.AdjustHoldingsRequest;
 import com.dakshata.data.model.autotrader.web.AdjustHoldingsResponse;
 import com.dakshata.data.model.common.IOperationResponse;
@@ -31,11 +26,7 @@ import com.dakshata.trading.model.portfolio.IOrder;
 import com.dakshata.trading.model.tv.order.TvOrder;
 import com.dakshata.trading.model.tv.position.TvPosSqOff;
 
-import kong.unirest.GenericType;
-import kong.unirest.HttpRequestWithBody;
-import kong.unirest.HttpResponse;
-import kong.unirest.UnirestInstance;
-import kong.unirest.UnirestParsingException;
+import kong.unirest.*;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -75,7 +66,6 @@ public class TradingService implements ITradingService {
 	private UnirestInstance client;
 
 	public TradingService(final String serviceUrl, final UnirestInstance client, final boolean autoRetryOnError) {
-		super();
 		this.client = client;
 		this.commandUrl = serviceUrl + COMMAND_URI + "/execute";
 		this.readPlatformOrdersUrl = serviceUrl + TRADING_URI + "/readPlatformOrders";
@@ -237,24 +227,8 @@ public class TradingService implements ITradingService {
 	public IOperationResponse<Boolean> modifyOrderByPlatformId(final String apiKey, @NonNull final String pseudoAccount,
 			@NonNull final String platformId, final OrderType orderType, final Integer quantity, final Float price,
 			final Float triggerPrice) {
-		final Map<String, Object> params = new HashMap<>();
-		params.put("pseudoAccount", pseudoAccount);
-		params.put("platformId", platformId);
-		params.put("orderType", (orderType == null) ? "" : orderType.name());
-		params.put("quantity", quantity);
-		params.put("price", price);
-		params.put("triggerPrice", triggerPrice);
-
-		final HttpRequestWithBody request = this.client.post(this.modifyOrderByPlatformIdUrl);
-		if (!isEmpty(apiKey)) {
-			request.header(API_KEY_HEADER, apiKey);
-		}
-
-		final HttpResponse<OperationResponse<Boolean>> response = request.fields(params)
-				.asObject(new GenericType<OperationResponse<Boolean>>() {
-				});
-
-		return this.processResponse(response);
+		return this.modifyOrderGeneric(apiKey, pseudoAccount, platformId, orderType, quantity, price, triggerPrice,
+				null);
 	}
 
 	@Override
@@ -537,6 +511,40 @@ public class TradingService implements ITradingService {
 	public IOperationResponse<Boolean> cancelOrderMCA(final String apiKey, final String pseudoAccount,
 			final String platformId, final String commandId) {
 		return this.cancelGeneric(this.cancelOrderByPlatformIdUrl, apiKey, pseudoAccount, platformId, commandId);
+	}
+
+	@Override
+	public IOperationResponse<Boolean> modifyOrderMCA(final String apiKey, final String pseudoAccount,
+			final String platformId, final OrderType orderType, final Integer quantity, final Float price,
+			final Float triggerPrice, final String commandId) {
+		return this.modifyOrderGeneric(apiKey, pseudoAccount, platformId, orderType, quantity, price, triggerPrice,
+				commandId);
+	}
+
+	private IOperationResponse<Boolean> modifyOrderGeneric(final String apiKey, @NonNull final String pseudoAccount,
+			@NonNull final String platformId, final OrderType orderType, final Integer quantity, final Float price,
+			final Float triggerPrice, final String commandId) {
+		final Map<String, Object> params = new HashMap<>();
+		params.put("pseudoAccount", pseudoAccount);
+		params.put("platformId", platformId);
+		params.put("orderType", (orderType == null) ? "" : orderType.name());
+		params.put("quantity", quantity);
+		params.put("price", price);
+		params.put("triggerPrice", triggerPrice);
+		if (!isEmpty(commandId)) {
+			params.put("commandId", commandId);
+		}
+
+		final HttpRequestWithBody request = this.client.post(this.modifyOrderByPlatformIdUrl);
+		if (!isEmpty(apiKey)) {
+			request.header(API_KEY_HEADER, apiKey);
+		}
+
+		final HttpResponse<OperationResponse<Boolean>> response = request.fields(params)
+				.asObject(new GenericType<OperationResponse<Boolean>>() {
+				});
+
+		return this.processResponse(response);
 	}
 
 }

@@ -6,12 +6,7 @@ package com.dakshata.autotrader.api;
 import java.util.List;
 import java.util.Set;
 
-import com.dakshata.constants.trading.OrderType;
-import com.dakshata.constants.trading.PositionCategory;
-import com.dakshata.constants.trading.PositionType;
-import com.dakshata.constants.trading.ProductType;
-import com.dakshata.constants.trading.TradeType;
-import com.dakshata.constants.trading.Validity;
+import com.dakshata.constants.trading.*;
 import com.dakshata.data.model.autotrader.web.AdjustHoldingsRequest;
 import com.dakshata.data.model.autotrader.web.AdjustHoldingsResponse;
 import com.dakshata.data.model.common.IOperationResponse;
@@ -295,6 +290,13 @@ public interface ITradingService {
 	 * This is for internal use. It is used by master-child order copying process.
 	 */
 	IOperationResponse<Boolean> cancelOrderMCA(String apiKey, String pseudoAccount, String platformId,
+			String commandId);
+
+	/**
+	 * This is for internal use. It is used by master-child order copying process.
+	 */
+	IOperationResponse<Boolean> modifyOrderMCA(final String apiKey, final String pseudoAccount, final String platformId,
+			final OrderType orderType, final Integer quantity, final Float price, final Float triggerPrice,
 			String commandId);
 
 }
