@@ -3,7 +3,7 @@
  */
 package com.dakshata.autotrader.api;
 
-import static com.dakshata.constants.ErrorCode.FORBIDDEN;
+import static com.dakshata.constants.ErrorCode.SYSTEM_FORBIDDEN;
 import static com.dakshata.constants.autotrader.IAutoTrader.API_KEY_HEADER;
 import static com.dakshata.constants.trading.Variety.REGULAR;
 import static com.dakshata.tools.internet.HttpStatus.toTextDefault;
@@ -419,7 +419,7 @@ public class TradingService implements ITradingService {
 				: toTextDefault(status, response.getStatusText());
 
 		final Exception error = new Exception(status + ": " + message);
-		return OperationResponse.<T>builder().error(error).errorCode(FORBIDDEN).build();
+		return OperationResponse.<T>builder().error(error).errorCode(SYSTEM_FORBIDDEN).build();
 	}
 
 	private IOperationResponse<Boolean> cancelGeneric(final String url, final String apiKey, final String pseudoAccount,
