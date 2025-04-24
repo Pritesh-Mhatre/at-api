@@ -5,11 +5,7 @@ package com.dakshata.autotrader.api;
 
 import java.util.Set;
 
-import com.dakshata.constants.trading.OrderType;
-import com.dakshata.constants.trading.PositionCategory;
-import com.dakshata.constants.trading.PositionType;
-import com.dakshata.constants.trading.ProductType;
-import com.dakshata.constants.trading.TradeType;
+import com.dakshata.constants.trading.*;
 import com.dakshata.data.model.common.IOperationResponse;
 import com.dakshata.trading.model.platform.PlatformHolding;
 import com.dakshata.trading.model.platform.PlatformMargin;
@@ -163,24 +159,27 @@ public interface IAutoTrader {
 	/**
 	 * Submits a square-off position request.
 	 *
-	 * @param pseudoAccount pseudo account
-	 * @param category      position category
-	 * @param type          position type
-	 * @param exchange      position exchange (broker independent exchange)
-	 * @param symbol        position symbol (broker independent symbol)
+	 * @param pseudoAccount    pseudo account
+	 * @param category         position category
+	 * @param type             position type
+	 * @param exchange         position exchange (broker independent exchange)
+	 * @param symbol           position symbol (broker independent symbol)
+	 * @param cancelOpenOrders cancel any open orders for this position
 	 * @return true on successful acceptance of square-off request, false otherwise
 	 */
 	IOperationResponse<Boolean> squareOffPosition(final String pseudoAccount, final PositionCategory category,
-			final PositionType type, final String exchange, final String symbol);
+			final PositionType type, final String exchange, final String symbol, boolean cancelOpenOrders);
 
 	/**
 	 * Submits a square-off portfolio request.
 	 *
-	 * @param pseudoAccount pseudo account
-	 * @param category      position category (DAY or NET portfolio to consider)
+	 * @param pseudoAccount    pseudo account
+	 * @param category         position category (DAY or NET portfolio to consider)
+	 * @param cancelOpenOrders cancel all open orders for this portfolio
 	 * @return true on successful acceptance of square-off request, false otherwise
 	 */
-	IOperationResponse<Boolean> squareOffPortfolio(final String pseudoAccount, final PositionCategory category);
+	IOperationResponse<Boolean> squareOffPortfolio(final String pseudoAccount, final PositionCategory category,
+			boolean cancelOpenOrders);
 
 	/**
 	 * This function executes a given command. The command can be operations like

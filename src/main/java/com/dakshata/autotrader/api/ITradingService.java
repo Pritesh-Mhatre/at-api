@@ -188,10 +188,11 @@ public interface ITradingService {
 	 * @return true on successful acceptance of square-off request, false otherwise
 	 */
 	IOperationResponse<Boolean> squareOffPosition(final String pseudoAccount, final PositionCategory category,
-			final PositionType type, final String exchange, final String symbol);
+			final PositionType type, final String exchange, final String symbol, final boolean cancelOpenOrders);
 
 	IOperationResponse<Boolean> squareOffPosition(final String apiKey, final String pseudoAccount,
-			final PositionCategory category, final PositionType type, final String exchange, final String symbol);
+			final PositionCategory category, final PositionType type, final String exchange, final String symbol,
+			final boolean cancelOpenOrders);
 
 	IOperationResponse<Boolean> squareOffTvPosition(String apiKey, TvPosSqOff input);
 
@@ -202,10 +203,11 @@ public interface ITradingService {
 	 * @param category      position category (DAY or NET portfolio to consider)
 	 * @return true on successful acceptance of square-off request, false otherwise
 	 */
-	IOperationResponse<Boolean> squareOffPortfolio(final String pseudoAccount, final PositionCategory category);
+	IOperationResponse<Boolean> squareOffPortfolio(final String pseudoAccount, final PositionCategory category,
+			final boolean cancelOpenOrders);
 
 	IOperationResponse<Boolean> squareOffPortfolio(final String apiKey, final String pseudoAccount,
-			final PositionCategory category);
+			final PositionCategory category, final boolean cancelOpenOrders);
 
 	/**
 	 * This function executes a given command. The command can be operations like

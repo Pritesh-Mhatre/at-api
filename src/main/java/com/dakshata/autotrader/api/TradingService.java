@@ -268,19 +268,21 @@ public class TradingService implements ITradingService {
 
 	@Override
 	public IOperationResponse<Boolean> squareOffPosition(final String pseudoAccount, final PositionCategory category,
-			final PositionType type, final String exchange, final String symbol) {
-		return this.squareOffPosition(null, pseudoAccount, category, type, exchange, symbol);
+			final PositionType type, final String exchange, final String symbol, final boolean cancelOpenOrders) {
+		return this.squareOffPosition(null, pseudoAccount, category, type, exchange, symbol, cancelOpenOrders);
 	}
 
 	@Override
 	public IOperationResponse<Boolean> squareOffPosition(final String apiKey, final String pseudoAccount,
-			final PositionCategory category, final PositionType type, final String exchange, final String symbol) {
+			final PositionCategory category, final PositionType type, final String exchange, final String symbol,
+			final boolean cancelOpenOrders) {
 		final Map<String, Object> params = new HashMap<>();
 		params.put("pseudoAccount", pseudoAccount);
 		params.put("category", category);
 		params.put("type", type);
 		params.put("exchange", exchange);
 		params.put("symbol", symbol);
+		params.put("cancelOpenOrders", cancelOpenOrders);
 
 		final HttpRequestWithBody request = this.client.post(this.squareOffPositionUrl);
 		if (!isEmpty(apiKey)) {
@@ -308,16 +310,18 @@ public class TradingService implements ITradingService {
 	}
 
 	@Override
-	public IOperationResponse<Boolean> squareOffPortfolio(final String pseudoAccount, final PositionCategory category) {
-		return this.squareOffPortfolio(null, pseudoAccount, category);
+	public IOperationResponse<Boolean> squareOffPortfolio(final String pseudoAccount, final PositionCategory category,
+			final boolean cancelOpenOrders) {
+		return this.squareOffPortfolio(null, pseudoAccount, category, cancelOpenOrders);
 	}
 
 	@Override
 	public IOperationResponse<Boolean> squareOffPortfolio(final String apiKey, final String pseudoAccount,
-			final PositionCategory category) {
+			final PositionCategory category, final boolean cancelOpenOrders) {
 		final Map<String, Object> params = new HashMap<>();
 		params.put("pseudoAccount", pseudoAccount);
 		params.put("category", category);
+		params.put("cancelOpenOrders", cancelOpenOrders);
 
 		final HttpRequestWithBody request = this.client.post(this.squareOffPortfolioUrl);
 		if (!isEmpty(apiKey)) {

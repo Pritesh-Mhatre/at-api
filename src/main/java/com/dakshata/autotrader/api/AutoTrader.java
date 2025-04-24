@@ -14,11 +14,7 @@ import java.util.function.Supplier;
 
 import org.apache.http.NoHttpResponseException;
 
-import com.dakshata.constants.trading.OrderType;
-import com.dakshata.constants.trading.PositionCategory;
-import com.dakshata.constants.trading.PositionType;
-import com.dakshata.constants.trading.ProductType;
-import com.dakshata.constants.trading.TradeType;
+import com.dakshata.constants.trading.*;
 import com.dakshata.data.model.common.IOperationResponse;
 import com.dakshata.trading.model.platform.PlatformHolding;
 import com.dakshata.trading.model.platform.PlatformMargin;
@@ -55,7 +51,6 @@ public class AutoTrader implements IAutoTrader {
 	 * @param serviceUrl AutoTrader api service url
 	 */
 	private AutoTrader(@NonNull final AutoTraderClientConfig config) {
-		super();
 		this.autoRetryOnError = config.isAutoRetryOnError();
 		this.tradingService = new TradingService(config.getServiceUrl(), this.prepareClient(config));
 	}
@@ -141,14 +136,16 @@ public class AutoTrader implements IAutoTrader {
 
 	@Override
 	public IOperationResponse<Boolean> squareOffPosition(final String pseudoAccount, final PositionCategory category,
-			final PositionType type, final String exchange, final String symbol) {
-		return this.executeWithRetry(
-				() -> this.tradingService.squareOffPosition(pseudoAccount, category, type, exchange, symbol));
+			final PositionType type, final String exchange, final String symbol, boolean cancelOpenOrders) {
+		return this.executeWithRetry(() -> this.tradingService.squareOffPosition(pseudoAccount, category, type,
+				exchange, symbol, cancelOpenOrders));
 	}
 
 	@Override
-	public IOperationResponse<Boolean> squareOffPortfolio(final String pseudoAccount, final PositionCategory category) {
-		return this.executeWithRetry(() -> this.tradingService.squareOffPortfolio(pseudoAccount, category));
+	public IOperationResponse<Boolean> squareOffPortfolio(final String pseudoAccount, final PositionCategory category,
+			boolean cancelOpenOrders) {
+		return this.executeWithRetry(
+				() -> this.tradingService.squareOffPortfolio(pseudoAccount, category, cancelOpenOrders));
 	}
 
 	@Override
