@@ -23,7 +23,7 @@ dependencies {
 	// Use following version during github repo publish
 	//api 'com.dakshata:public-library:2.5.0'
 
-	//api 'com.dakshata:public-library:1.0.0'
+	api 'com.dakshata:public-library:1.0.0'
 	api 'com.konghq:unirest-java:3.13.10'
 	api 'com.konghq:unirest-objectmapper-jackson:3.4.01'
 
