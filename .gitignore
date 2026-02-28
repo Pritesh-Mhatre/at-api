@@ -1,9 +1,35 @@
-/gradle/
-/.gradle/
+# Eclipse
 /.settings/
 /bin/
 /.classpath
 /.project
-/gradlew
-/gradlew.bat
+
+# Gradle
+/gradle/
+/.gradle/
 /build/
+# Allow Gradle Wrapper
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
+
+# VS Code
+.vscode/
+
+# Claude Code CLI
+.claude/
+.claude.json
+
+# Secrets & Environment Variables
+.env
+.env.*
+application-local.properties
+*.key
+
+# OS generated files
+Thumbs.db
+.DS_Store
+
+# Java logs & compiled classes
+*.log
+*.class
+
