@@ -49,6 +49,14 @@ test {
     useJUnitPlatform {
         excludeTags 'skip'
     }
+    // All non-skipped tests may be excluded. Skip the task entirely when
+    // invoked transitively (build/check) so Gradle's "no test executed" check
+    // doesn't fire. Run manually with `./gradlew test --tests "..."`.
+    onlyIf {
+        gradle.startParameter.taskNames.any { it == 'test' || it == ':test' || it.endsWith(':test') } ||
+            !filter.includePatterns.isEmpty() ||
+            !filter.commandLineIncludePatterns.isEmpty()
+    }
 }
 
 // To publish to our maven repository hosted on github
