@@ -178,6 +178,20 @@ public interface ITradingService {
 			final Float triggerPrice);
 
 	/**
+	 * Modifies the order, additionally setting the disclosed quantity percentage.
+	 *
+	 * @param disclosedQtyPct percent of order quantity to show in market depth
+	 *                        (0 = no change to existing disclosed quantity;
+	 *                        10–100 = set new disclosed quantity; values below 10
+	 *                        are auto-adjusted to 10 to satisfy exchange rules).
+	 *                        Applies only when the resolved order type is LIMIT
+	 *                        or STOP_LOSS; ignored for MARKET / SL_MARKET.
+	 */
+	IOperationResponse<Boolean> modifyOrderByPlatformId(final String apiKey, final String pseudoAccount,
+			final String platformId, final OrderType orderType, final Integer quantity, final Float price,
+			final Float triggerPrice, final Integer disclosedQtyPct);
+
+	/**
 	 * Submits a square-off position request.
 	 *
 	 * @param pseudoAccount pseudo account

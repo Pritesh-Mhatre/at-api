@@ -122,6 +122,18 @@ public interface IAutoTrader {
 			final OrderType orderType, final Integer quantity, final Float price, final Float triggerPrice);
 
 	/**
+	 * Modifies the order, additionally setting the disclosed quantity percentage.
+	 *
+	 * @param disclosedQtyPct percent of order quantity to show in market depth
+	 *                        (0 = no change; 10–100 = set new value; values
+	 *                        below 10 are auto-adjusted to 10 to satisfy exchange
+	 *                        rules). Applies only to LIMIT / STOP_LOSS orders.
+	 */
+	IOperationResponse<Boolean> modifyOrderByPlatformId(final String pseudoAccount, final String platformId,
+			final OrderType orderType, final Integer quantity, final Float price, final Float triggerPrice,
+			final Integer disclosedQtyPct);
+
+	/**
 	 * Cancels an order. For more information, please see
 	 * <a href="https://stocksdeveloper.in/documentation/api/cancel-order/">api
 	 * docs</a>.

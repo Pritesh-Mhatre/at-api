@@ -135,6 +135,14 @@ public class AutoTrader implements IAutoTrader {
 	}
 
 	@Override
+	public IOperationResponse<Boolean> modifyOrderByPlatformId(final String pseudoAccount, final String platformId,
+			final OrderType orderType, final Integer quantity, final Float price, final Float triggerPrice,
+			final Integer disclosedQtyPct) {
+		return this.executeWithRetry(() -> this.tradingService.modifyOrderByPlatformId(null, pseudoAccount, platformId,
+				orderType, quantity, price, triggerPrice, disclosedQtyPct));
+	}
+
+	@Override
 	public IOperationResponse<Boolean> squareOffPosition(final String pseudoAccount, final PositionCategory category,
 			final PositionType type, final String exchange, final String symbol, boolean cancelOpenOrders) {
 		return this.executeWithRetry(() -> this.tradingService.squareOffPosition(pseudoAccount, category, type,

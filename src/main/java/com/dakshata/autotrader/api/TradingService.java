@@ -229,7 +229,15 @@ public class TradingService implements ITradingService {
 			@NonNull final String platformId, final OrderType orderType, final Integer quantity, final Float price,
 			final Float triggerPrice) {
 		return this.modifyOrderGeneric(apiKey, pseudoAccount, platformId, orderType, quantity, price, triggerPrice,
-				null);
+				null, null);
+	}
+
+	@Override
+	public IOperationResponse<Boolean> modifyOrderByPlatformId(final String apiKey, @NonNull final String pseudoAccount,
+			@NonNull final String platformId, final OrderType orderType, final Integer quantity, final Float price,
+			final Float triggerPrice, final Integer disclosedQtyPct) {
+		return this.modifyOrderGeneric(apiKey, pseudoAccount, platformId, orderType, quantity, price, triggerPrice,
+				disclosedQtyPct, null);
 	}
 
 	@Override
@@ -523,12 +531,12 @@ public class TradingService implements ITradingService {
 			final String platformId, final OrderType orderType, final Integer quantity, final Float price,
 			final Float triggerPrice, final String commandId) {
 		return this.modifyOrderGeneric(apiKey, pseudoAccount, platformId, orderType, quantity, price, triggerPrice,
-				commandId);
+				null, commandId);
 	}
 
 	private IOperationResponse<Boolean> modifyOrderGeneric(final String apiKey, @NonNull final String pseudoAccount,
 			@NonNull final String platformId, final OrderType orderType, final Integer quantity, final Float price,
-			final Float triggerPrice, final String commandId) {
+			final Float triggerPrice, final Integer disclosedQtyPct, final String commandId) {
 		final Map<String, Object> params = new HashMap<>();
 		params.put("pseudoAccount", pseudoAccount);
 		params.put("platformId", platformId);
@@ -536,6 +544,9 @@ public class TradingService implements ITradingService {
 		params.put("quantity", quantity);
 		params.put("price", price);
 		params.put("triggerPrice", triggerPrice);
+		if (disclosedQtyPct != null) {
+			params.put("disclosedQtyPct", disclosedQtyPct);
+		}
 		if (!isEmpty(commandId)) {
 			params.put("commandId", commandId);
 		}
